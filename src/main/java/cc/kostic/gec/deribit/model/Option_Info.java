@@ -6,10 +6,9 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
 import java.util.Locale;
 
-public class OptContract implements Comparable<OptContract> {
+public class Option_Info implements Comparable<Option_Info> {
 
 	private String 		base_currency;				// "BTC"
 	private BigDecimal	price_change;				//  {JSONObject$Null@5610} "null" - desava se da nema volume, bid, ask i slicno
@@ -32,22 +31,13 @@ public class OptContract implements Comparable<OptContract> {
 	private BigDecimal	mid_price;					// {JSONObject$Null@5610} "null"
 	private BigDecimal	bid_price;					// {JSONObject$Null@5610} "null"
 	
-	private Instant expiration;
-	
-	@Override
-	public int compareTo(OptContract o) {
-		// Return a negative integer if o1 < o2
-		// Return a positive integer if o1 > o2
-		// Return zero if o1 == o2
-		return getExpiration().compareTo(o.getExpiration());
-	}
 	
 	public enum PC {
 		PUT,
 		CALL
 	}
 	
-	public OptContract(JSONObject o) {
+	public Option_Info(JSONObject o) {
 		this.base_currency = o.getString("base_currency");
 		this.price_change = o.optBigDecimal("price_change", null);
 		this.underlying_price = o.optBigDecimal("underlying_price", null);
@@ -91,12 +81,54 @@ public class OptContract implements Comparable<OptContract> {
 		return instant;
 	}
 	
+	
+	
+	
+	
+	@Override
+	public int compareTo(Option_Info o) {
+		// Return a negative integer if o1 < o2
+		// Return a positive integer if o1 > o2
+		// Return zero if o1 == o2
+		return getExpiration().compareTo(o.getExpiration());
+	}
+	
+	
+	
+	
 	@Override
 	public String toString() {
 		String s = "";
 		s += instrument_name + "\t " + bid_price + "\t " + ask_price;
 		return s;
 	}
+	
+	
+	/*
+	For each option contract i, calculate its dollar‐gamma contribution as:
+	GEXᵢ = Γᵢ × ContractSize × OIᵢ × S² × 0.01
+	Γᵢ = option’s unit gamma (change in delta per $1 move in S)
+	ContractSize = 100 (for standard equity options)
+	OIᵢ = open interest
+	S² = square of current spot price
+	0.01 = 1% move in the underlying
+ */
+	
+	
+	
+	/*
+	GET https://www.deribit.com/api/v2/public/get_instruments
+     ?currency=BTC
+     &kind=option
+     &expired=false
+	
+	 */
+	
+	/*
+	https://www.deribit.com/api/v2/public/ticker?instrument_name=BTC-30JUN23-65000-C
+
+	 */
+	
 }
 
 

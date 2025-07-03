@@ -6,6 +6,7 @@ module cc.kostic.gec {
 	requires org.kordamp.ikonli.javafx;
 	requires java.net.http;
 	requires org.json;
+	requires java.desktop;
 	
 	opens cc.kostic.gec to javafx.fxml;
 	exports cc.kostic.gec;

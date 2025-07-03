@@ -4,13 +4,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" prefHeight="255.0" prefWidth="230.0" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="cc.kostic.gec.HelloController">
+<VBox fx:id="prozorcic" alignment="CENTER" prefHeight="255.0" prefWidth="230.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.kostic.gec.HelloController">
 	<padding>
 		<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
 	</padding>
-	<Button onAction="#onHelloButtonClick" text="Hello!" />
+   <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+     <tabs>
+       <Tab text="Untitled Tab 1" />
+       <Tab text="Untitled Tab 2" />
+     </tabs>
+   </TabPane>
 
 	<Label fx:id="welcomeText" />
    <Button mnemonicParsing="false" onAction="#onFetchClick" text="Fechuj ga" />
    <Label fx:id="l_chain" text="Ovde ce doci chain" />
+   <TabPane fx:id="tabovi" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
+	<Button onAction="#onHelloButtonClick" text="Hello!" />
 </VBox>

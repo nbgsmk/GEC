@@ -1,4 +1,4 @@
-package cc.kostic.gec.instrument;
+package cc.kostic.gec.primitives;
 
 public enum Currency {
 	BTC("BTC"),

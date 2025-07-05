@@ -1,11 +1,14 @@
 package cc.kostic.gec.endpoints;
 
-import cc.kostic.gec.instrument.Currency;
-import cc.kostic.gec.instrument.Kind;
+import cc.kostic.gec.deribit.model.DeribitJSONrsp;
+import cc.kostic.gec.primitives.Currency;
+import cc.kostic.gec.primitives.Kind;
+import cc.kostic.gec.web.Fetcher;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class GetInstruments {
-	
-	private final String endpoint = "https://www.deribit.com/api/v2/public/get_instruments?currency=BTC&expired=false&kind=option";
 	
 	private final BaseURL b;
 	private final Currency currency;
@@ -17,7 +20,15 @@ public class GetInstruments {
 		b = new BaseURL();
 	}
 	
-	public String req(){
-		return b.pub() + "/get_instruments?currency=" + currency.getName() + "&expired=false&kind=" + kind.getName();
+	private String buildReq(){
+		// return https://www.deribit.com/api/v2/public/get_instruments?currency=BTC&expired=false&kind=option
+		return b.pub() + "/get_instruments?currency=" + currency + "&expired=false&kind=" + kind;
+	}
+	
+	public JSONObject getResult(){
+		String reqUrl = buildReq();
+		Fetcher f = new Fetcher(reqUrl);
+		DeribitJSONrsp dr = new DeribitJSONrsp(f.fetch());
+		return dr.getResultArray();
 	}
 }

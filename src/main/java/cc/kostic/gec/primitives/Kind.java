@@ -1,4 +1,4 @@
-package cc.kostic.gec.instrument;
+package cc.kostic.gec.primitives;
 
 public enum Kind {
 	FUTURE("future"),
@@ -14,5 +14,10 @@ public enum Kind {
 	
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

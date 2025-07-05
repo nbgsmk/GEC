@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="274.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MyController">
+
+	<!-- Top: a single button -->
+	<top>
+		<Button fx:id="myButton" onAction="#handleButtonClick" text="Click Me" />
+	</top>
+
+	<!-- Center: a tab bar with two tabs -->
+	<center>
+		<TabPane fx:id="tabPane">
+
+			<tabs>
+				<Tab text="First Tab">
+					<content>
+						<Label text="Content for the first tab" />
+					</content>
+				</Tab>
+
+				<Tab text="Second Tab">
+					<content>
+						<Label text="Content for the second tab" />
+					</content>
+				</Tab>
+			</tabs>
+
+		</TabPane>
+	</center>
+
+</BorderPane>

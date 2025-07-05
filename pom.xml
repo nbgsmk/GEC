@@ -69,7 +69,7 @@
 						<!-- Default configuration for running with: mvn clean javafx:run -->
 						<id>default-cli</id>
 						<configuration>
-							<mainClass>cc.kostic.gec/cc.kostic.gec.HelloApplication</mainClass>
+							<mainClass>cc.kostic.gec/cc.kostic.gec.App</mainClass>
 							<launcher>app</launcher>
 							<jlinkZipName>app</jlinkZipName>
 							<jlinkImageName>app</jlinkImageName>

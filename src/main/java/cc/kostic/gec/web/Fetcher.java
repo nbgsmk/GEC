@@ -1,7 +1,6 @@
 package cc.kostic.gec.web;
 
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,7 +16,7 @@ public class Fetcher {
 		this.url = url;
 	}
 	
-	public JSONObject get(){
+	public JSONObject fetch(){
 		JSONObject response = new JSONObject();
 		try (HttpClient client = HttpClient.newHttpClient()) {
 			HttpRequest req = HttpRequest.newBuilder(URI.create(url)).build();

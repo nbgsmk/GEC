@@ -1,14 +1,10 @@
 package cc.kostic.gec;
 
-import cc.kostic.gec.deribit.model.DeribitJSONrsp;
-import cc.kostic.gec.deribit.model.Option_Info;
-import cc.kostic.gec.deribit.model.ListedOptionContracts;
 import cc.kostic.gec.endpoints.GetExpirations;
-import cc.kostic.gec.endpoints.GetInstruments;
-import cc.kostic.gec.endpoints.GetTicker;
+import cc.kostic.gec.endpoints.GetInstrument_info;
+import cc.kostic.gec.endpoints.GetInstruments_info;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Kind;
-import cc.kostic.gec.web.Fetcher;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,7 +13,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.List;
 
 
 public class AppController {
@@ -41,6 +37,8 @@ public class AppController {
 	}
 	
 	public void onRefreshClick(ActionEvent actionEvent) {
+		// OK !
+		// JSONObject
 		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
 		List<String> epirations = ge.getList();
 		for (String s : epirations) {
@@ -50,8 +48,8 @@ public class AppController {
 		}
 		tv_stat.setText("ima " + epirations.size());
 		
-		// GetInstruments gi = new GetInstruments(Currency.ETH, Kind.OPTION);
-		// List<JSONObject> postojeci_kontrakti = gi.getResult();
+		GetInstruments_info gis = new GetInstruments_info(Currency.ETH, Kind.OPTION);
+		List<String> postojeci_kontrakti = gis.getList();
 		
 		
 		
@@ -74,10 +72,10 @@ public class AppController {
 		// }
 		
 		
-		// GetTicker gt = new GetTicker("BTC-11JUL25-104000-C");
-		// f = new Fetcher(gt.req());
-		// webRsp = f.fetch();
-		
+		// OK !
+		// JSONObject
+		GetInstrument_info gi = new GetInstrument_info("BTC-11JUL25-104000-C");
+		JSONObject ii = gi.getResult();
 		
 		System.out.println("da!");
 	}

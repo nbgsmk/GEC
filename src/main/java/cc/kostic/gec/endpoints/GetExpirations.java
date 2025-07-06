@@ -47,7 +47,7 @@ public class GetExpirations {
 		String reqUrl = buildReq();
 		Fetcher f = new Fetcher(reqUrl);
 		DeribitJSONrsp dr = new DeribitJSONrsp(f.fetch());
-		return dr.getResultArray();
+		return dr.getResultObject();
 	}
 	
 	public List<String> getList(){

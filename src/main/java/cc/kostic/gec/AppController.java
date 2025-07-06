@@ -1,8 +1,8 @@
 package cc.kostic.gec;
 
 import cc.kostic.gec.endpoints.GetExpirations;
-import cc.kostic.gec.endpoints.GetInstrument_info;
-import cc.kostic.gec.endpoints.GetInstruments_info;
+import cc.kostic.gec.endpoints.GetInstrument;
+import cc.kostic.gec.endpoints.GetInstruments;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Kind;
 import javafx.event.ActionEvent;
@@ -18,7 +18,13 @@ import java.util.List;
 
 public class AppController {
 	@FXML
-	public Button b_refresh;
+	public Button b_expirations;
+	@FXML
+	public Button b_instrument;
+	@FXML
+	public Button b_instruments;
+	@FXML
+	public Button b_ticker;
 	@FXML
 	public TabPane opt_chains;
 	@FXML
@@ -26,17 +32,7 @@ public class AppController {
 	
 	
 	@FXML
-	protected void onHelloButtonClick() {
-		tv_stat.setText("Welcome to JavaFX Application!");
-	}
-	
-	
-	public void onFetchClick(ActionEvent actionEvent) {
-		
-
-	}
-	
-	public void onRefreshClick(ActionEvent actionEvent) {
+	public void getExpirationsClick(ActionEvent actionEvent) {
 		// OK !
 		// JSONObject
 		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
@@ -48,10 +44,8 @@ public class AppController {
 		}
 		tv_stat.setText("ima " + epirations.size());
 		
-		GetInstruments_info gis = new GetInstruments_info(Currency.ETH, Kind.OPTION);
-		List<String> postojeci_kontrakti = gis.getList();
-		
-		
+		System.out.println("expirations");
+
 		
 		
 		// f = new Fetcher("https://www.deribit.com/api/v2/public/get_book_summary_by_currency?currency=BTC&kind=option");
@@ -72,11 +66,32 @@ public class AppController {
 		// }
 		
 		
+
+	}
+	
+	@FXML
+	public void getInstrumentClick(ActionEvent actionEvent) {
 		// OK !
 		// JSONObject
-		GetInstrument_info gi = new GetInstrument_info("BTC-11JUL25-104000-C");
+		GetInstrument gi = new GetInstrument("BTC-27MAR26-105000-C");
 		JSONObject ii = gi.getResult();
 		
-		System.out.println("da!");
+		System.out.println(ii);
+		System.out.println("instrument");
+	}
+	
+	@FXML
+	public void getInstrumentSClick(ActionEvent actionEvent) {
+		// NOK !
+		// JSONObject
+		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
+		List<String> postojeci_kontrakti = gis.getList();
+		System.out.println(postojeci_kontrakti);
+		System.out.println("instrument-s");
+		
+	}
+	
+	@FXML
+	public void getTickerClick(ActionEvent actionEvent) {
 	}
 }

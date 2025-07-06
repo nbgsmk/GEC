@@ -1,15 +1,14 @@
 package cc.kostic.gec.deribit.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DeribitJSONrsp {
 	
+	public final static String glupkey = "a";
 	public int id;
 	public String jsonRpc;
-	public JSONObject resultArray;
+	public JSONObject resultObj;
 	public Object errorObject;
 	public boolean testnet;
 	public int usIn;
@@ -21,7 +20,16 @@ public class DeribitJSONrsp {
 		
 		// setId(jsonObj.getInt("id"));
 		setJsonRpcVersion(jsonObj.getString("jsonrpc"));
-		setResultArray(jsonObj.getJSONObject("result"));
+		
+		Object iks = jsonObj.get("result");
+		if (iks instanceof JSONArray) {
+			JSONObject tmp = new JSONObject();
+			tmp.put(glupkey, iks);
+			setResultObject(tmp);
+		} else {
+			setResultObject(jsonObj.getJSONObject("result"));
+		}
+		
 		// setErrorObject(jsonObj.getJSONObject("error"));
 		setTestnet(jsonObj.getBoolean("testnet"));
 		setUsIn(jsonObj.getInt("usIn"));
@@ -44,21 +52,11 @@ public class DeribitJSONrsp {
 		return jsonRpc;
 	}
 	
-	private void setResultArray(JSONObject result) {
-		this.resultArray = result;
+	private void setResultObject(JSONObject result) {
+		this.resultObj = result;
 	}
-	public JSONObject getResultArray() {
-		return resultArray;
-		/*
-		List<JSONObject> tmp = new ArrayList<>();
-		tmp.add(resultArray);
-		*/
-
-		// for (int i = 0; i < resultArray.length(); i++) {
-		// 	JSONObject o = resultArray.getJSONObject(i);
-		// 	tmp.add(o);
-		// }
-		// return tmp;
+	public JSONObject getResultObject() {
+		return resultObj;
 	}
 	
 	private void setErrorObject(Object errorObject) {

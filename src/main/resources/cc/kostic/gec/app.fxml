@@ -7,9 +7,16 @@
 <AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.kostic.gec.AppController">
    <children>
       <VBox fx:id="prozorcic" prefHeight="300.0" prefWidth="800.0" spacing="10.0">
-      	<Button fx:id="b_refresh" nodeOrientation="LEFT_TO_RIGHT" onAction="#onRefreshClick" text="Refresh data" />
+         <HBox>
+            <children>
+            	<Button fx:id="b_expirations" nodeOrientation="LEFT_TO_RIGHT" onAction="#getExpirationsClick" text="expirations" />
+               <Button fx:id="b_instrument" mnemonicParsing="false" onAction="#getInstrumentClick" text="instrument" />
+               <Button fx:id="b_instruments" mnemonicParsing="false" onAction="#getInstrumentSClick" text="instrumentS" />
+               <Button fx:id="b_ticker" mnemonicParsing="false" onAction="#getTickerClick" text="ticker" />
+            </children>
+         </HBox>
          <TabPane fx:id="opt_chains" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
-      
+
       	<Label fx:id="tv_stat" text="hey lo" />
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

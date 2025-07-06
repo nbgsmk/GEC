@@ -16,12 +16,15 @@ public class ListedOptionContracts {
 	private String 	price_index;				// "btc_usd"
 	private String 	kind;						// "option"
 	private String	instrument_name;			// "BTC-11JUL25-150000-C"
-	private Long	expiration_timestamp;		// 1751443200000
+	private Long	expiration_timestamp;		// 1751875200000
+	private Long	creation_timestamp;			// 1751616012000
 	private boolean	is_active;					// true
 	private String	option_type;				// "call"
 	private Long	strike;						// 96000
+	private Long	min_trade_amount;			// 0.1
 	
 	private SortedSet<Long> expirations = new TreeSet<>();
+	private SortedSet<String> instrumentNames = new TreeSet<>();
 	
 	public ListedOptionContracts() {
 	
@@ -32,27 +35,38 @@ public class ListedOptionContracts {
 		this.kind = o.getString("kind");
 		this.instrument_name = o.getString("instrument_name");
 		this.expiration_timestamp = o.optBigDecimal("expiration_timestamp", null).longValue();
+		this.creation_timestamp = o.optBigDecimal("creation_timestamp", null).longValue();
 		this.is_active = o.getBoolean("is_active");
 		this.option_type = o.getString("option_type");
 		this.strike = o.optBigDecimal("strike", null).longValue();
+		this.min_trade_amount = o.optBigDecimal("min_trade_amount", null).longValue();
 		
 		expirations.add(expiration_timestamp);
+		instrumentNames.add(instrument_name);
 	}
 	
-	public SortedSet<Long> getTimestamps(){
+	public SortedSet<Long> getExpirationTimestamps(){
 		return expirations;
 	}
-	public List<String> getTimeStampsStr(){
+	public List<String> getExpirationsStrings(){
 		List<String> strs = new ArrayList<>();
 		strs = new ArrayList<>();
 		for (Long e : expirations) {
-			String s = getExpirationString(e);
+			String s = toExpStr(e);
 			strs.add(s);
 		}
 		return strs;
 	}
 	
-	private String getExpirationString(Long exp_stamp) {
+	public List<String> getInstrumentNames() {
+		// return instrumentNames;
+		List<String> strs = new ArrayList<>();
+		strs = new ArrayList<>();
+		strs.addAll(instrumentNames);
+		return strs;
+	}
+	
+	private String toExpStr(Long exp_stamp) {
 		Instant instant = Instant.ofEpochMilli(exp_stamp);
 		ZonedDateTime zdt = instant.atZone(ZoneId.of("UTC"));
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MMM-yy");

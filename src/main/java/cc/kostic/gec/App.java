@@ -14,10 +14,12 @@ public class App extends Application {
 		Scene scene = new Scene(fxmlLoader.load());
 		stage.setTitle("Hello!");
 		stage.setScene(scene);
+		stage.setX(5);
+		stage.setY(5);
 		stage.show();
 	}
 	
 	public static void main(String[] args) {
-		launch();
+		launch(args);
 	}
 }

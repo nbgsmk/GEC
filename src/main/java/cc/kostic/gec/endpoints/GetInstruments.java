@@ -2,6 +2,7 @@ package cc.kostic.gec.endpoints;
 
 import cc.kostic.gec.deribit.model.DeribitJSONrsp;
 import cc.kostic.gec.deribit.model.ListedOptionContracts;
+import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Kind;
 import cc.kostic.gec.web.Fetcher;
@@ -17,6 +18,8 @@ public class GetInstruments {
 	private final Currency currency;
 	private final Kind kind;
 	
+	private List<OptionContract> listedOptions = new ArrayList<>();
+	
 	public GetInstruments(Currency currency, Kind kind) {
 		this.currency = currency;
 		this.kind = kind;
@@ -30,6 +33,15 @@ public class GetInstruments {
 		return b.pub() + "/get_instruments?currency=" + currency + "&expired=false&kind=" + kind;
 	}
 	
+	public List<OptionContract> getList(){
+		JSONObject jSrsp = getJSrsp();
+		JSONArray jsInstruments = jSrsp.getJSONArray(DeribitJSONrsp.glupkey);
+		for (int i = 0; i < jsInstruments.length(); i++) {
+			listedOptions.add(new OptionContract(jsInstruments.getJSONObject(i)));
+		}
+		return listedOptions;
+	}
+	
 	private JSONObject getJSrsp(){
 		String reqUrl = buildReq();
 		Fetcher f = new Fetcher(reqUrl);
@@ -37,15 +49,6 @@ public class GetInstruments {
 		return dr.getResultObject();
 	}
 	
-	public List<String> getList(){
-		JSONObject jSrsp = getJSrsp();
-		JSONArray jsInstruments = jSrsp.getJSONArray(DeribitJSONrsp.glupkey);
-		ListedOptionContracts loc = new ListedOptionContracts();
-		for (int i = 0; i < jsInstruments.length(); i++) {
-			loc.add(jsInstruments.getJSONObject(i));
-		}
-		return loc.getInstrumentNames();
-	}
 	
 	// https://www.deribit.com/api/v2/public/get_instruments?currency=ETH&expired=false&kind=option
 	// expired=false

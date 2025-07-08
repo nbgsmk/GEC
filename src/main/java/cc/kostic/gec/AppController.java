@@ -8,12 +8,10 @@ import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Kind;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
+import jdk.jfr.EventType;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.json.JSONObject;
 
@@ -32,13 +30,13 @@ public class AppController {
 	@FXML
 	public TabPane opt_chains;
 	@FXML
-	private Label tv_stat;
+	private Button b_refr;
 	
 	
 	
 	
 	@FXML
-	public void getExpirationsClick(ActionEvent actionEvent) {
+	public void onExpirationsClick(ActionEvent actionEvent) {
 		// OK !
 		// JSONObject
 		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
@@ -53,26 +51,26 @@ public class AppController {
 			gp.add(new Label("Row 0, Col 0"), 0, 0);
 			gp.add(new Label("Row 1, Col 1"), 1, 1);
 		}
-		tv_stat.setText("ima " + epirations.size());
+		// tv_stat.setText("ima " + epirations.size());
 		
 		System.out.println("expirations");
 
 	}
 	
 	@FXML
-	public void getInstrumentClick(ActionEvent actionEvent) {
+	public void onInstrumentClick(ActionEvent actionEvent) {
 		// OK !
 		// JSONObject
 		GetInstrument gi = new GetInstrument("BTC-27MAR26-105000-C");
 		JSONObject ii = gi.getResult();
-		tv_stat.setText(ii.toString());
+		// tv_stat.setText(ii.toString());
 		
 		System.out.println(ii);
 		System.out.println("instrument");
 	}
 	
 	@FXML
-	public void getInstrumentSClick(ActionEvent actionEvent) {
+	public void onInstrumentSClick(ActionEvent actionEvent) {
 		// NOK !
 		// JSONObject
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
@@ -83,6 +81,37 @@ public class AppController {
 	}
 	
 	@FXML
-	public void getTickerClick(ActionEvent actionEvent) {
+	public void onTickerClick(ActionEvent actionEvent) {
+	}
+	
+	public void onRefreshClick(ActionEvent actionEvent) {
+		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
+		List<String> exps = ge.getList();
+		
+		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
+		List<OptionContract> contracts = gis.getList();
+		
+		for (int i = 0; i < exps.size(); i++) {
+			Tab t = opt_chains.getTabs().get(i);
+			String tabtitle = t.getText();
+			if (tabtitle.length() == 6) {
+				// tabtitle = "0" + tabtitle;
+			}
+			tabtitle = "-" + tabtitle + "-";
+			ScrollPane scroll = new ScrollPane();
+			Label l = new Label();
+			String cnt = "";
+			for (int j = 0; j < contracts.size(); j++) {
+				OptionContract ocj = contracts.get(j);
+				if (ocj.getInstrument_name().contains(tabtitle)) {
+					cnt += ocj.getInstrument_name() + " " + ocj.getExpirationStr() + " " + ocj.getStrike() + " " + ocj.getOption_type() + "\n";
+				}
+			}
+			l.setText(cnt);
+			scroll.setContent(l);
+			t.setContent(scroll);
+		}
+	
+		System.out.println("wow");
 	}
 }

@@ -49,6 +49,10 @@ public class OptionContract extends Instrument{
 		return s;
 	}
 	
+	public String getInstrument_name() {
+		return instrument_name;
+	}
+	
 	public Long getExpirationTimestamp() {
 		return this.expiration_timestamp;
 	}
@@ -57,6 +61,13 @@ public class OptionContract extends Instrument{
 		return Instant.ofEpochMilli(this.expiration_timestamp);
 	}
 	
+	public String getOption_type() {
+		return option_type;
+	}
+	
+	public Long getStrike() {
+		return strike;
+	}
 	
 	@Override
 	public String toString() {

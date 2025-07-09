@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class ListedOptionContracts {
+public class NA_ListedOptionContracts {
 
 	private String 	price_index;				// "btc_usd"
 	private String 	kind;						// "option"
@@ -26,7 +26,7 @@ public class ListedOptionContracts {
 	private SortedSet<Long> expirations = new TreeSet<>();
 	private SortedSet<String> instrumentNames = new TreeSet<>();
 	
-	public ListedOptionContracts() {
+	public NA_ListedOptionContracts() {
 	
 	}
 	

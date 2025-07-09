@@ -99,7 +99,7 @@ public class AppController {
 			for (int j = 0; j < contracts.size(); j++) {
 				OptionContract ocj = contracts.get(j);
 				if (ocj.getInstrument_name().contains(expirationName)) {
-					ocinfo += ocj.getInstrument_name() + " " + ocj.getExpirationStr() + " " + ocj.getStrike() + " " + ocj.getOption_type() + "\n";
+					ocinfo += ocj.getInstrument_name() + " " + ocj.getExpirationString() + " " + ocj.getStrike() + " " + ocj.getOption_type() + "\n";
 				}
 			}
 			Label l = new Label();
@@ -114,38 +114,3 @@ public class AppController {
 	}
 }
 
-
-
-/*
-
-
-
-OKX	/api/v5/market/instruments?instType=OPTION	✓	✓	✓ Δ,Γ,Θ,Vega
-Binance	/dapi/v1/optionInfo	✓	✓	✗
-Bybit	/v2/public/option/instruments	✓	✓	✗
-Delta Exchange	/api/v2/instruments?instrument_type=OPTION	✓	✓	✓ Δ,Γ,Θ,Vega,Rho
-Bit.com	/api/v1/public/get_instruments	✓	partial	✗
-LedgerX	/v2/options	✓	✓	✓ Δ,Γ,Θ,Vega
-
-
-How to get last price and real-time IV
-public/ticker
-
-Call public/ticker with instrument_name.
-
-Response includes
-
-last_price (the most recent trade)
-
-mark_iv, bid_iv, ask_iv (real-time implied volatilities)
-
-public/get_book_summary_by_instrument
-
-Provides a snapshot of the order book plus
-
-last_price
-
-mark_price
-
-mark_iv, bid_iv, ask_iv
- */

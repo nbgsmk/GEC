@@ -4,23 +4,68 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.kostic.gec.AppController">
-   <children>
-      <VBox fx:id="prozorcic" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
-         <HBox>
-            <children>
-               <Button fx:id="b_refr" mnemonicParsing="false" onAction="#onRefreshClick" text="refr" />
-            	<Button fx:id="b_expirations" nodeOrientation="LEFT_TO_RIGHT" onAction="#onExpirationsClick" text="expirations" />
-               <Button fx:id="b_instrument" mnemonicParsing="false" onAction="#onInstrumentClick" text="instrument" />
-               <Button fx:id="b_instruments" mnemonicParsing="false" onAction="#onInstrumentSClick" text="instrumentS" />
-               <Button fx:id="b_ticker" mnemonicParsing="false" onAction="#onTickerClick" text="ticker" />
-            </children>
-         </HBox>
-         <TabPane fx:id="opt_chains" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
-
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.kostic.gec.AppController">
+   <center>
+      <TabPane>
+         <tabs>
+            <Tab closable="false" text="chains">
+               <content>
+                  <VBox fx:id="vb_chains" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
+                     <HBox>
+                        <children>
+                        	<Button fx:id="b_expirations" nodeOrientation="LEFT_TO_RIGHT" onAction="#onExpirationsClick" text="expirations" />
+                           <Button fx:id="b_instrument" mnemonicParsing="false" onAction="#onInstrumentClick" text="instrument" />
+                           <Button fx:id="b_instruments" mnemonicParsing="false" onAction="#onInstrumentSClick" text="instrumentS" />
+                           <Button fx:id="b_ticker" mnemonicParsing="false" onAction="#onTickerClick" text="ticker" />
+                        </children>
+                     </HBox>
+                     <TabPane fx:id="opt_chains" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
+            
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+			 <Tab closable="false" text="greeks">
+				 <content>
+					 <VBox fx:id="vb_greeks" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
+					 </VBox>
+				 </content>
+			 </Tab>
+			 <Tab closable="false" text="test">
+				 <content>
+					 <VBox fx:id="vb_test" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
+					 </VBox>
+				 </content>
+			 </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+			 <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <Button fx:id="b_get_chains" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGetChainsClick" text="get option chains" />
+         </children>
       </VBox>
-   </children>
-</AnchorPane>
+   </top>
+</BorderPane>

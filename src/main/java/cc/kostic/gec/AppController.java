@@ -5,6 +5,7 @@ import cc.kostic.gec.endpoints.GetInstrument;
 import cc.kostic.gec.endpoints.GetInstruments;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
+import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import org.controlsfx.control.spreadsheet.Grid;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Set;
 
 
 public class AppController {
@@ -84,16 +86,13 @@ public class AppController {
 	public void onTickerClick(ActionEvent actionEvent) {
 	}
 	
-	public void onRefreshClick(ActionEvent actionEvent) {
-		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
-		List<String> exps = ge.getList();
+	public void onGetChainsClick(ActionEvent actionEvent) {
 		
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getList();
-		
-		for (int i = 0; i < exps.size(); i++) {
-			// Tab t = opt_chains.getTabs().get(i);
-			Tab t = new Tab(exps.get(i));
+		Set<Expiration> exps = gis.getListedExpirations();
+		for (Expiration e : exps) {
+			Tab t = new Tab(e.getExpirationShortFmt());
 			String expirationName = "-" + t.getText() + "-";
 			String ocinfo = "";
 			for (int j = 0; j < contracts.size(); j++) {
@@ -108,6 +107,7 @@ public class AppController {
 			scroll.setContent(l);
 			t.setContent(scroll);
 			opt_chains.getTabs().add(t);
+			
 		}
 	
 		System.out.println("wow");

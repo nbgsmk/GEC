@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="274.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MyController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <HBox>
+               <children>
+                  <Button fx:id="b_1" mnemonicParsing="false" text="b1" />
+                  <Button fx:id="b_2" mnemonicParsing="false" text="b2" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="BTC">
+            <content>
+              <AnchorPane fx:id="tab_btc" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+          <Tab text="ETH">
+            <content>
+              <AnchorPane fx:id="tab_eth" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <left>
+      <Button mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Button mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <Button mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>

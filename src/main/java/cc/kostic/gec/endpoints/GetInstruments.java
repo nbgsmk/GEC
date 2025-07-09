@@ -1,12 +1,10 @@
 package cc.kostic.gec.endpoints;
 
 import cc.kostic.gec.deribit.model.DeribitJSONrsp;
-import cc.kostic.gec.deribit.model.ListedOptionContracts;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Kind;
 import cc.kostic.gec.web.Fetcher;
-import javafx.collections.transformation.SortedList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

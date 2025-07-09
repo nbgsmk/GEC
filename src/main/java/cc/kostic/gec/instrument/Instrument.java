@@ -39,6 +39,96 @@ public class Instrument {
 	// private final List<Double> tick_size_steps;			// [ { "tick_size": 0.0005,  "above_price": 0.005 } ]
 
 
+	// OPTION
+	//
+	// https://www.deribit.com/api/v2/public/get_instrument
+	// ?instrument_name=
+	// BTC-26JUN26-100000-C
+	// --------------------------------------------------------------------------------
+	// {
+	//   "jsonrpc": "2.0",
+	//   "result": {
+	//     "price_index": "btc_usd",
+	//     "rfq": false,
+	//     "kind": "option",                                // OPTION / FUTURE specific
+	//     "instrument_name": "BTC-26JUN26-100000-C",
+	//     "maker_commission": 0.0003,
+	//     "taker_commission": 0.0003,
+	//     "instrument_type": "reversed",
+	//     "expiration_timestamp": 1782460800000,
+	//     "creation_timestamp": 1750924810000,
+	//     "is_active": true,
+	//     "option_type": "call",                           // OPTION only
+	//     "contract_size": 1,
+	//     "tick_size": 0.0001,
+	//     "strike": 100000,                                // OPTION only
+	//     "instrument_id": 479190,
+	//     "settlement_period": "month",
+	//     "min_trade_amount": 0.1,
+	//     "block_trade_commission": 0.0003,
+	//     "block_trade_min_trade_amount": 25,
+	//     "block_trade_tick_size": 0.0001,
+	//     "settlement_currency": "BTC",
+	//     "base_currency": "BTC",
+	//     "counter_currency": "USD",
+	//     "quote_currency": "BTC",
+	//     "tick_size_steps": [
+	//       {
+	//         "tick_size": 0.0005,
+	//         "above_price": 0.005
+	//       }
+	//     ]
+	//   },
+	//   "usIn": 1752066535270080,
+	//   "usOut": 1752066535270470,
+	//   "usDiff": 390,
+	//   "testnet": false
+	// }
+
+
+	// FUTURE
+	//
+	// https://www.deribit.com/api/v2/public/get_instrument
+	// ?instrument_name=
+	// BTC_USDC-PERPETUAL
+	// --------------------------------------------------------------------------------
+	// {
+	//   "jsonrpc": "2.0",
+	//   "result": {
+	//     "price_index": "btc_usdc",
+	//     "rfq": false,
+	//     "kind": "future",
+	//     "instrument_name": "BTC_USDC-PERPETUAL",
+	//     "maker_commission": 0,
+	//     "taker_commission": 0.0005,
+	//     "instrument_type": "linear",
+	//     "expiration_timestamp": 32503708800000,
+	//     "creation_timestamp": 1646824342000,
+	//     "is_active": true,
+	//     "contract_size": 0.001,
+	//     "tick_size": 1,
+	//     "instrument_id": 211704,
+	//     "settlement_period": "perpetual",
+	//     "min_trade_amount": 0.001,
+	//     "future_type": "linear",                     // FUTURE only
+	//     "max_leverage": 50,                          // FUTURE only
+	//     "max_liquidation_commission": 0.0075,        // FUTURE only
+	//     "block_trade_commission": 0.0001,
+	//     "block_trade_min_trade_amount": 200000,
+	//     "block_trade_tick_size": 1,
+	//     "settlement_currency": "USDC",
+	//     "base_currency": "BTC",
+	//     "counter_currency": "USDC",
+	//     "quote_currency": "USDC",
+	//     "tick_size_steps": []
+	//   },
+	//   "usIn": 1752066289979842,
+	//   "usOut": 1752066289980054,
+	//   "usDiff": 212,
+	//   "testnet": false
+	// }
+
+
 	public Instrument(JSONObject o) {
 		this.rawJs = o;
 
@@ -172,95 +262,6 @@ public class Instrument {
 	public String toString() {
 		return this.getInstrument_name();
 	}
-
-
-
-	//
-	// https://www.deribit.com/api/v2/public/get_instrument
-	// ?instrument_name=
-	// BTC-26JUN26-100000-C
-	// --------------------------------------------------------------------------------
-	// {
-	//   "jsonrpc": "2.0",
-	//   "result": {
-	//     "price_index": "btc_usd",
-	//     "rfq": false,
-	//     "kind": "option",                                // OPTION / FUTURE specific
-	//     "instrument_name": "BTC-26JUN26-100000-C",
-	//     "maker_commission": 0.0003,
-	//     "taker_commission": 0.0003,
-	//     "instrument_type": "reversed",
-	//     "expiration_timestamp": 1782460800000,
-	//     "creation_timestamp": 1750924810000,
-	//     "is_active": true,
-	//     "option_type": "call",                           // OPTION only
-	//     "contract_size": 1,
-	//     "tick_size": 0.0001,
-	//     "strike": 100000,                                // OPTION only
-	//     "instrument_id": 479190,
-	//     "settlement_period": "month",
-	//     "min_trade_amount": 0.1,
-	//     "block_trade_commission": 0.0003,
-	//     "block_trade_min_trade_amount": 25,
-	//     "block_trade_tick_size": 0.0001,
-	//     "settlement_currency": "BTC",
-	//     "base_currency": "BTC",
-	//     "counter_currency": "USD",
-	//     "quote_currency": "BTC",
-	//     "tick_size_steps": [
-	//       {
-	//         "tick_size": 0.0005,
-	//         "above_price": 0.005
-	//       }
-	//     ]
-	//   },
-	//   "usIn": 1752066535270080,
-	//   "usOut": 1752066535270470,
-	//   "usDiff": 390,
-	//   "testnet": false
-	// }
-
-
-	// https://www.deribit.com/api/v2/public/get_instrument?
-	// instrument_name=
-	// BTC_USDC-PERPETUAL
-	// --------------------------------------------------------------------------------
-	// {
-	//   "jsonrpc": "2.0",
-	//   "result": {
-	//     "price_index": "btc_usdc",
-	//     "rfq": false,
-	//     "kind": "future",
-	//     "instrument_name": "BTC_USDC-PERPETUAL",
-	//     "maker_commission": 0,
-	//     "taker_commission": 0.0005,
-	//     "instrument_type": "linear",
-	//     "expiration_timestamp": 32503708800000,
-	//     "creation_timestamp": 1646824342000,
-	//     "is_active": true,
-	//     "contract_size": 0.001,
-	//     "tick_size": 1,
-	//     "instrument_id": 211704,
-	//     "settlement_period": "perpetual",
-	//     "min_trade_amount": 0.001,
-	//     "future_type": "linear",                     // FUTURE only
-	//     "max_leverage": 50,                          // FUTURE only
-	//     "max_liquidation_commission": 0.0075,        // FUTURE only
-	//     "block_trade_commission": 0.0001,
-	//     "block_trade_min_trade_amount": 200000,
-	//     "block_trade_tick_size": 1,
-	//     "settlement_currency": "USDC",
-	//     "base_currency": "BTC",
-	//     "counter_currency": "USDC",
-	//     "quote_currency": "USDC",
-	//     "tick_size_steps": []
-	//   },
-	//   "usIn": 1752066289979842,
-	//   "usOut": 1752066289980054,
-	//   "usDiff": 212,
-	//   "testnet": false
-	// }
-
 
 
 }

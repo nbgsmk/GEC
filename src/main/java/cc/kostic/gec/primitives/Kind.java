@@ -4,7 +4,9 @@ public enum Kind {
 	FUTURE("future"),
 	FUTURE_COMBO("future_combo"),
 	OPTION("option"),
-	OPTION_COMBO("option_combo");
+	OPTION_COMBO("option_combo"),
+	UNKNOWN("unknown_instrument_kind")
+	;
 	
 	private final String name;
 	

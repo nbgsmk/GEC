@@ -7,13 +7,15 @@ import org.testng.annotations.Test;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static org.testng.Assert.*;
 public class ExpirationTest {
-	
+
+	private final long jul_07_2025_00gmt = 1751846400000L;
+	private final long jul_22_2025_00gmt = 1753142400000L;
+
 	@BeforeMethod
 	public void setUp() {
 	}
@@ -24,13 +26,15 @@ public class ExpirationTest {
 	
 	@Test
 	public void testGetExpirationStr() {
-		Date date = null;
+		// ovo je samo proba. ne koristi se inace
 		try {
-			String exp = "07JUL25";
+			String exp = "07JUL25";		// podrazumeva 7.jul.2025. 00:00 GMT
 			SimpleDateFormat sdf = new SimpleDateFormat("ddMMMyy");
-			date = sdf.parse(exp);
+			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+			Date date = sdf.parse(exp);
 			long unixmS = date.getTime();
 			System.out.println("Unix Timestamp for " + exp + ": " + unixmS);
+			assertEquals(unixmS, jul_07_2025_00gmt, "mora biti 7.jul.2025. 00:00 GMT");
 			
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
@@ -41,28 +45,28 @@ public class ExpirationTest {
 	public void testGetExpirationInstant() {
 	}
 	
+
 	@Test
-	public void testIks() {
-		Instant instant = Instant.ofEpochMilli(1752103030606L);
-		// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");		// ISO date
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dMMMyy");						// 9JUL20 bez vodece nule
-		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
-		String fs1 = localDateTime.format(formatter).toUpperCase();	// deribit voli uppercase
-		System.out.println(fs1);
-		
+	void getExpirationShortFmt() {
+		Expiration e7 = new Expiration(BigDecimal.valueOf(jul_07_2025_00gmt));
+		Expiration e11 = new Expiration(BigDecimal.valueOf(jul_22_2025_00gmt));
+		assertEquals(e7.getExpirationShortFmt(), "7JUL25", "mora biti 7JUL25 bez vodece nule");
+		assertEquals(e11.getExpirationShortFmt(), "22JUL25", "mora biti 22JUL25 sa dve cifre");
 	}
+
 	
 	@Test
 	public void testGetExpiration_timestamp() {
-		Expiration exp27mar26 = new Expiration(BigDecimal.valueOf(1774598400000L));				// Deribit expiration "27MAR26" = Fri Mar 27 2026 08:00 GMT
-		assertEquals(exp27mar26.getExpiration_timestamp(), BigDecimal.valueOf(1774598400000L), "sam sebe");
+		long mar_27_2026_08hGMT = 1774598400000L;			// Svi Deribit expiration su u 8:00am -> "27MAR26" = Fri Mar 27 2026 08:00 GMT
+		Expiration exp27mar26 = new Expiration(BigDecimal.valueOf(mar_27_2026_08hGMT));
+		assertEquals(exp27mar26.getExpiration_timestamp(), BigDecimal.valueOf(mar_27_2026_08hGMT), "sam sebe");
 		assertEquals(exp27mar26.getExpirationStringISO(), "2026-03-27T08:00:00Z", "iso date");
 		assertEquals(exp27mar26.getExpirationShortFmt(), "27MAR26", "deribit kratki format");
 
-		Expiration bezVodeceNule = new Expiration(BigDecimal.valueOf(1772953200000L));			// Sun Mar 08 2026 07:00:00 GMT+0000
-		Expiration bezVodeceNulePlus = new Expiration(BigDecimal.valueOf(1772953200001L));		// plus 1mS ali je u istom danu
-		assertEquals(bezVodeceNule.getExpirationShortFmt(), "8MAR26", "deribit kratki format - bez vodece nule");
-		assertEquals(bezVodeceNulePlus.getExpirationShortFmt(), "8MAR26", "mora biti u okviru istog datuma");
+		Expiration bezVodeceNule = new Expiration(BigDecimal.valueOf(jul_07_2025_00gmt));				// Sun Mar 08 2026 07:00:00 GMT+0000
+		Expiration bezVodeceNulePlus = new Expiration(BigDecimal.valueOf(jul_07_2025_00gmt + 1L));		// plus 1mS ali je u istom danu
+		assertEquals(bezVodeceNule.getExpirationShortFmt(), "7JUL25", "deribit kratki format - bez vodece nule");
+		assertEquals(bezVodeceNulePlus.getExpirationShortFmt(), "7JUL25", "mora biti u okviru istog datuma");
 	}
 	
 	@Test
@@ -89,4 +93,6 @@ public class ExpirationTest {
 		assertTrue(a.compareTo(eq)==0, "isti smo");
 		
 	}
+
+
 }

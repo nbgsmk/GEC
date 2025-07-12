@@ -1,5 +1,6 @@
 package cc.kostic.gec.primitives;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -8,17 +9,17 @@ import java.time.temporal.ChronoUnit;
 
 public class Expiration implements Comparable<Expiration>{
 	
-	private final long expiration_timestamp;
+	private final BigDecimal expiration_timestamp;
 	private String expirationStringISO = "";
 	private final Instant expirationInstant;
 	
-	public Expiration(long expiration_timestamp) {
+	public Expiration(BigDecimal expiration_timestamp) {
 		this.expiration_timestamp = expiration_timestamp;
-		this.expirationInstant = Instant.ofEpochMilli(this.expiration_timestamp);
+		this.expirationInstant = Instant.ofEpochMilli(this.expiration_timestamp.longValue());
 		this.expirationStringISO = expirationInstant.toString();
 	}
 	
-	public long getExpiration_timestamp() {
+	public BigDecimal getExpiration_timestamp() {
 		return expiration_timestamp;
 	}
 	
@@ -38,15 +39,15 @@ public class Expiration implements Comparable<Expiration>{
 		return s;
 	}
 	
-	public long getDTEmillis(){
-		return Instant.now().toEpochMilli() - this.expiration_timestamp;
+	public Long getDTEmillis(){
+		return Instant.now().toEpochMilli() - this.expiration_timestamp.longValue();
 	}
-	public long getDTEdays(){
-		long days = ChronoUnit.DAYS.between(Instant.now(), getExpirationInstant());
+	public Long getDTEdays(){
+		Long days = ChronoUnit.DAYS.between(Instant.now(), getExpirationInstant());
 		return days;
 	}
-	public long getDTEhours(){
-		long hrs = ChronoUnit.HOURS.between(Instant.now(), getExpirationInstant());
+	public Long getDTEhours(){
+		Long hrs = ChronoUnit.HOURS.between(Instant.now(), getExpirationInstant());
 		return hrs;
 	}
 
@@ -55,7 +56,7 @@ public class Expiration implements Comparable<Expiration>{
 		// if (this.expiration_timestamp > o.expiration_timestamp) { return 1; }
 		// if (this.expiration_timestamp < o.expiration_timestamp) { return -1; }
 		// return 0;
-		return Long.compare(this.expiration_timestamp, o.expiration_timestamp);			// normalni sort
-		// return Long.compare(o.expiration_timestamp, this.expiration_timestamp);		// najdalji datumi prvo
+		return Long.compare(this.expiration_timestamp.longValue(), o.expiration_timestamp.longValue());			// normalni sort
+		// return Long.compare(o.expiration_timestamp.longValue(), this.expiration_timestamp.longValue());		// najdalji datumi prvo
 	}
 }

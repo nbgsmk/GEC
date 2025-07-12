@@ -4,14 +4,12 @@ import cc.kostic.gec.deribit.model.DeribitJSONrsp;
 import cc.kostic.gec.web.Fetcher;
 import org.json.JSONObject;
 
-import java.util.Timer;
-
-public class Ticker {
+public class GetTicker {
 	
 	private final BaseURL b;
 	private final String instrument_name;
 	
-	public Ticker(String instrument_name) {
+	public GetTicker(String instrument_name) {
 		this.instrument_name = instrument_name;
 		b = new BaseURL();
 	}

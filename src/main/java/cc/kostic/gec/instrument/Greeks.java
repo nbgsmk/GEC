@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class Greeks {
 	
 	private final BigDecimal	delta;		// "delta":0
-	private final BigDecimal gamma;		// "gamma":0
+	private final BigDecimal	gamma;		// "gamma":0
 	private final BigDecimal	vega;		// "vega":0.00001
 	private final BigDecimal	theta;		// "theta":-0.00003
 	private final BigDecimal	rho;		// "rho":0

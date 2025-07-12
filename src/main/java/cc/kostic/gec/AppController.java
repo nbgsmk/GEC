@@ -3,8 +3,6 @@ package cc.kostic.gec;
 import cc.kostic.gec.endpoints.GetExpirations;
 import cc.kostic.gec.endpoints.GetInstrument;
 import cc.kostic.gec.endpoints.GetInstruments;
-import cc.kostic.gec.endpoints.Ticker;
-import cc.kostic.gec.instrument.Greeks;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
@@ -12,13 +10,9 @@ import cc.kostic.gec.primitives.Kind;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
-import jdk.jfr.EventType;
-import org.controlsfx.control.spreadsheet.Grid;
 import org.json.JSONObject;
 
-import java.io.*;
 import java.util.List;
 import java.util.Set;
 

@@ -1,7 +1,5 @@
-package cc.kostic.gec.endpoints;
+package cc.kostic.gec.endpoints.deribit;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringJoiner;
 
 public class BaseURL {

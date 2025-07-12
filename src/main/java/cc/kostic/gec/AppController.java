@@ -1,8 +1,8 @@
 package cc.kostic.gec;
 
-import cc.kostic.gec.endpoints.GetExpirations;
-import cc.kostic.gec.endpoints.GetInstrument;
-import cc.kostic.gec.endpoints.GetInstruments;
+import cc.kostic.gec.endpoints.deribit.GetExpirations;
+import cc.kostic.gec.endpoints.deribit.GetInstrument;
+import cc.kostic.gec.endpoints.deribit.GetInstruments;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
@@ -70,7 +70,7 @@ public class AppController {
 		// NOK !
 		// JSONObject
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> postojeci_kontrakti = gis.getList(GetInstruments.SRC.WEB);
+		List<OptionContract> postojeci_kontrakti = gis.getContracts(GetInstruments.SRC.WEB);
 		System.out.println(postojeci_kontrakti);
 		System.out.println("instrument-s");
 		
@@ -83,17 +83,17 @@ public class AppController {
 	public void onGetFromWebClick(ActionEvent actionEvent) {
 		
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getList(GetInstruments.SRC.WEB);
+		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.WEB);
 		gis.writeToDisk();
-		prikaz(gis.getAllExpirations(), contracts);
+		prikaz(gis.getExpirations(), contracts);
 		System.out.println("wow");
 	}
 
 	public void onGetFromDiskClick(ActionEvent actionEvent) {
 
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getList(GetInstruments.SRC.DISK);
-		prikaz(gis.getAllExpirations(), contracts);
+		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.DISK);
+		prikaz(gis.getExpirations(), contracts);
 		System.out.println("wow");
 	}
 

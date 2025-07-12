@@ -1,6 +1,5 @@
-package cc.kostic.gec.endpoints;
+package cc.kostic.gec.endpoints.deribit;
 
-import cc.kostic.gec.deribit.model.DeribitJSONrsp;
 import cc.kostic.gec.web.Fetcher;
 import org.json.JSONObject;
 

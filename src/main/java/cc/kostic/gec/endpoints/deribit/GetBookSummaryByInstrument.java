@@ -1,4 +1,4 @@
-package cc.kostic.gec.endpoints;
+package cc.kostic.gec.endpoints.deribit;
 
 
 

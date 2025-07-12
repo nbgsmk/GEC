@@ -1,6 +1,5 @@
-package cc.kostic.gec.endpoints;
+package cc.kostic.gec.endpoints.deribit;
 
-import cc.kostic.gec.deribit.model.DeribitJSONrsp;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
@@ -46,7 +45,7 @@ public class GetInstruments {
 	}
 
 
-	public List<OptionContract> getList(SRC dataSource){
+	public List<OptionContract> getContracts(SRC dataSource){
 		JSONObject jsResponse = null;
 		switch (dataSource){
 			case WEB -> {
@@ -82,7 +81,7 @@ public class GetInstruments {
 			 ObjectInputStream ois = new ObjectInputStream(bis);){
 			Object infile = ois.readObject();
 			if (infile instanceof String) {
-				rezult = new JSONObject(infile);
+				rezult = new JSONObject((String) infile);
 			}
 		} catch (ClassNotFoundException | IOException e) {
 			throw new RuntimeException(e);
@@ -104,11 +103,9 @@ public class GetInstruments {
 	}
 
 
-	public List<OptionContract> getAllOptionContracts() {
-		return allOptionContracts;
-	}
+
 	
-	public SortedSet<Expiration> getAllExpirations() {
+	public SortedSet<Expiration> getExpirations() {
 		return allExpirations;
 	}
 	

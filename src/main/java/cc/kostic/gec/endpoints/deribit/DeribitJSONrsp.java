@@ -1,4 +1,4 @@
-package cc.kostic.gec.deribit.model;
+package cc.kostic.gec.endpoints.deribit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,8 +13,8 @@ public class DeribitJSONrsp {
 	private JSONObject resultObj;
 	private Object errorObject;
 	private boolean testnet;
-	private Instant usIn;
 	private Instant usOut;
+	private Instant usIn;
 	private Long usDiff;
 	
 	

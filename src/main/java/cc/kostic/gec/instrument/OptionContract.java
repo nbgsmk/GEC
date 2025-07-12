@@ -6,6 +6,8 @@ public class OptionContract extends Instrument {
 
 	private final String    option_type;	                // "call",
 	private final Double    strike;				            // 100000,
+	
+	private Greeks greeks;
 
 	public enum OPTION_TYPE {
 		CALL,
@@ -31,7 +33,13 @@ public class OptionContract extends Instrument {
 		return strike;
 	}
 	
+	public Greeks getGreeks() {
+		return greeks;
+	}
 	
+	public void setGreeks(Greeks greeks) {
+		this.greeks = greeks;
+	}
 }
 
 

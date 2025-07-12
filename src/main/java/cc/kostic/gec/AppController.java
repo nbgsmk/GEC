@@ -3,6 +3,8 @@ package cc.kostic.gec;
 import cc.kostic.gec.endpoints.GetExpirations;
 import cc.kostic.gec.endpoints.GetInstrument;
 import cc.kostic.gec.endpoints.GetInstruments;
+import cc.kostic.gec.endpoints.Ticker;
+import cc.kostic.gec.instrument.Greeks;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
@@ -16,6 +18,7 @@ import jdk.jfr.EventType;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.json.JSONObject;
 
+import java.io.*;
 import java.util.List;
 import java.util.Set;
 
@@ -76,7 +79,7 @@ public class AppController {
 		// NOK !
 		// JSONObject
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> postojeci_kontrakti = gis.getList();
+		List<OptionContract> postojeci_kontrakti = gis.getList(GetInstruments.SRC.WEB);
 		System.out.println(postojeci_kontrakti);
 		System.out.println("instrument-s");
 		
@@ -89,7 +92,17 @@ public class AppController {
 	public void onGetChainsClick(ActionEvent actionEvent) {
 		
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getList();
+		// gis.writeToDisk();
+		
+		List<OptionContract> contracts = gis.getList(GetInstruments.SRC.DISK);
+		
+		// for (OptionContract oc : contracts) {
+		// 	String s = oc.getInstrument_name();
+		// 	Ticker t = new Ticker(s);
+		// 	JSONObject gg = t.getResult();
+		// 	oc.setGreeks(new Greeks(gg));
+		// }
+		
 		Set<Expiration> exps = gis.getListedExpirations();
 		for (Expiration e : exps) {
 			Tab t = new Tab(e.getExpirationShortFmt());
@@ -107,7 +120,6 @@ public class AppController {
 			scroll.setContent(l);
 			t.setContent(scroll);
 			opt_chains.getTabs().add(t);
-			
 		}
 	
 		System.out.println("wow");

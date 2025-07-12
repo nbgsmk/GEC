@@ -3,17 +3,19 @@ package cc.kostic.gec.deribit.model;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.Instant;
+
 public class DeribitJSONrsp {
 	
 	public final static String glupkey = "a";
-	public int id;
-	public String jsonRpc;
-	public JSONObject resultObj;
-	public Object errorObject;
-	public boolean testnet;
-	public int usIn;
-	public int usOut;
-	public int usDiff;
+	private Long id;
+	private String jsonRpc;
+	private JSONObject resultObj;
+	private Object errorObject;
+	private boolean testnet;
+	private Instant usIn;
+	private Instant usOut;
+	private Long usDiff;
 	
 	
 	public DeribitJSONrsp(JSONObject jsonObj) {
@@ -32,16 +34,16 @@ public class DeribitJSONrsp {
 		
 		// setErrorObject(jsonObj.getJSONObject("error"));
 		setTestnet(jsonObj.getBoolean("testnet"));
-		setUsIn(jsonObj.getInt("usIn"));
-		setUsOut(jsonObj.getInt("usOut"));
-		setUsDiff(jsonObj.getInt("usDiff"));
+		setUsIn(jsonObj.getLong("usIn"));
+		setUsOut(jsonObj.getLong("usOut"));
+		setUsDiff(jsonObj.getLong("usDiff"));
 	}
 	
 	
-	private void setId(int id) {
+	private void setId(Long id) {
 		this.id = id;
 	}
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 	
@@ -73,24 +75,24 @@ public class DeribitJSONrsp {
 		return testnet;
 	}
 	
-	private void setUsIn(int usIn) {
-		this.usIn = usIn;
+	private void setUsIn(Long usIn) {
+		this.usIn = Instant.ofEpochSecond(0L, usIn*1000L);
 	}
-	public int getUsIn() {
+	public Instant getUsIn() {
 		return usIn;
 	}
 	
-	private void setUsOut(int usOut) {
-		this.usOut = usOut;
+	private void setUsOut(Long usOut) {
+		this.usOut = Instant.ofEpochSecond(0L, usOut*1000L);
 	}
-	public int getUsOut() {
+	public Instant getUsOut() {
 		return usOut;
 	}
 	
-	private void setUsDiff(int usDiff) {
+	private void setUsDiff(Long usDiff) {
 		this.usDiff = usDiff;
 	}
-	public int getUsDiff() {
+	public Long getUsDiff() {
 		return usDiff;
 	}
 	

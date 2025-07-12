@@ -4,6 +4,8 @@ import cc.kostic.gec.deribit.model.DeribitJSONrsp;
 import cc.kostic.gec.web.Fetcher;
 import org.json.JSONObject;
 
+import java.util.Timer;
+
 public class Ticker {
 	
 	private final BaseURL b;
@@ -20,9 +22,15 @@ public class Ticker {
 	}
 	
 	public JSONObject getResult(){
-		String reqUrl = buildReq();
-		Fetcher f = new Fetcher(reqUrl);
-		DeribitJSONrsp dr = new DeribitJSONrsp(f.fetch());
+		DeribitJSONrsp dr;
+		try {
+			Thread.sleep(100);
+			String reqUrl = buildReq();
+			Fetcher f = new Fetcher(reqUrl);
+			dr = new DeribitJSONrsp(f.fetch());
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 		return dr.getResultObject();
 	}
 	

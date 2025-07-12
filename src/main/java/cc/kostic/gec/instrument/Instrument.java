@@ -3,12 +3,13 @@ package cc.kostic.gec.instrument;
 import cc.kostic.gec.primitives.Kind;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Instrument {
+public class Instrument implements Serializable {
 
 	private final JSONObject rawJs;                             // mozda ce da zatreba
 
@@ -264,4 +265,5 @@ public class Instrument {
 	}
 
 
+	
 }

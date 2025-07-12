@@ -9,6 +9,8 @@ import cc.kostic.gec.web.Fetcher;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -19,9 +21,16 @@ public class GetInstruments {
 	private final BaseURL b;
 	private final Currency currency;
 	private final Kind kind;
+	private Instant rspUsIn;
+	private Instant rspUsOut;
 	
 	private final List<OptionContract> listedOptions = new ArrayList<>();
 	private final SortedSet<Expiration> listedExpirations = new TreeSet<>();
+	
+	public enum SRC{
+		WEB,
+		DISK
+	}
 	
 	public GetInstruments(Currency currency, Kind kind) {
 		this.currency = currency;
@@ -36,9 +45,45 @@ public class GetInstruments {
 		return b.pub() + "/get_instruments?currency=" + currency + "&expired=false&kind=" + kind;
 	}
 	
-	public List<OptionContract> getList(){
-		JSONObject jSrsp = getJSrsp();
-		JSONArray jsInstruments = jSrsp.getJSONArray(DeribitJSONrsp.glupkey);
+	public void writeToDisk() {
+		JSONObject jsResponse = getFromWeb();
+		
+		try (FileOutputStream fos = new FileOutputStream("chain_oos.txt");
+			 BufferedOutputStream bos = new BufferedOutputStream(fos);
+			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
+			// jsResponse.append("snapshot_epoch_millis", rspUsOut.getEpochSecond()*1000L);
+			oos.writeObject(jsResponse.toString(4));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private JSONObject readFromDisk() {
+		JSONObject rezult = new JSONObject();
+		try (FileInputStream fis = new FileInputStream("chain_oos.txt");
+			 BufferedInputStream bis = new BufferedInputStream(fis);
+			 ObjectInputStream ois = new ObjectInputStream(bis);){
+			Object infile = ois.readObject();
+			if (infile instanceof String) {
+				rezult = new JSONObject(infile);
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			throw new RuntimeException(e);
+		}
+		return rezult;
+	}
+	
+	public List<OptionContract> getList(SRC dataSource){
+		JSONObject jsResponse = null;
+		switch (dataSource){
+			case WEB -> {
+				jsResponse = getFromWeb();
+			}
+			case DISK -> {
+				jsResponse = readFromDisk();
+			}
+		}
+		JSONArray jsInstruments = jsResponse.getJSONArray(DeribitJSONrsp.glupkey);
 		for (int i = 0; i < jsInstruments.length(); i++) {
 			OptionContract oc = new OptionContract(jsInstruments.getJSONObject(i));
 			this.listedOptions.add(oc);
@@ -47,10 +92,13 @@ public class GetInstruments {
 		return listedOptions;
 	}
 	
-	private JSONObject getJSrsp(){
+	private JSONObject getFromWeb(){
 		String reqUrl = buildReq();
 		Fetcher f = new Fetcher(reqUrl);
-		DeribitJSONrsp dr = new DeribitJSONrsp(f.fetch());
+		JSONObject raw = f.fetch();
+		DeribitJSONrsp dr = new DeribitJSONrsp(raw);
+		rspUsIn = dr.getUsIn();
+		rspUsOut = dr.getUsOut();
 		return dr.getResultObject();
 	}
 	

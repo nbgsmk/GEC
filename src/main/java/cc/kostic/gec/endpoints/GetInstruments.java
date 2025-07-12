@@ -24,8 +24,8 @@ public class GetInstruments {
 	private Instant rspUsIn;
 	private Instant rspUsOut;
 	
-	private final List<OptionContract> listedOptions = new ArrayList<>();
-	private final SortedSet<Expiration> listedExpirations = new TreeSet<>();
+	private final List<OptionContract> allOptionContracts = new ArrayList<>();
+	private final SortedSet<Expiration> allExpirations = new TreeSet<>();
 	
 	public enum SRC{
 		WEB,
@@ -44,21 +44,38 @@ public class GetInstruments {
 		// return https://www.deribit.com/api/v2/public/get_instruments?currency=BTC&kind=option
 		return b.pub() + "/get_instruments?currency=" + currency + "&expired=false&kind=" + kind;
 	}
-	
-	public void writeToDisk() {
-		JSONObject jsResponse = getFromWeb();
-		
-		try (FileOutputStream fos = new FileOutputStream("chain_oos.txt");
-			 BufferedOutputStream bos = new BufferedOutputStream(fos);
-			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
-			// jsResponse.append("snapshot_epoch_millis", rspUsOut.getEpochSecond()*1000L);
-			oos.writeObject(jsResponse.toString(4));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+
+
+	public List<OptionContract> getList(SRC dataSource){
+		JSONObject jsResponse = null;
+		switch (dataSource){
+			case WEB -> {
+				jsResponse = getFromWeb();
+			}
+			case DISK -> {
+				jsResponse = getFromDisk();
+			}
 		}
+		JSONArray jsInstruments = jsResponse.getJSONArray(DeribitJSONrsp.glupkey);
+		for (int i = 0; i < jsInstruments.length(); i++) {
+			OptionContract oc = new OptionContract(jsInstruments.getJSONObject(i));
+			this.allOptionContracts.add(oc);
+			this.allExpirations.add(new Expiration(oc.getExpiration_timestamp()));
+		}
+		return allOptionContracts;
 	}
 	
-	private JSONObject readFromDisk() {
+	private JSONObject getFromWeb(){
+		String reqUrl = buildReq();
+		Fetcher f = new Fetcher(reqUrl);
+		JSONObject raw = f.fetch();
+		DeribitJSONrsp dr = new DeribitJSONrsp(raw);
+		rspUsIn = dr.getUsIn();
+		rspUsOut = dr.getUsOut();
+		return dr.getResultObject();
+	}
+
+	private JSONObject getFromDisk() {
 		JSONObject rezult = new JSONObject();
 		try (FileInputStream fis = new FileInputStream("chain_oos.txt");
 			 BufferedInputStream bis = new BufferedInputStream(fis);
@@ -72,42 +89,27 @@ public class GetInstruments {
 		}
 		return rezult;
 	}
-	
-	public List<OptionContract> getList(SRC dataSource){
-		JSONObject jsResponse = null;
-		switch (dataSource){
-			case WEB -> {
-				jsResponse = getFromWeb();
-			}
-			case DISK -> {
-				jsResponse = readFromDisk();
-			}
+
+	public void writeToDisk() {
+		JSONObject jsResponse = getFromWeb();
+
+		try (FileOutputStream fos = new FileOutputStream("chain_oos.txt");
+			 BufferedOutputStream bos = new BufferedOutputStream(fos);
+			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
+			// jsResponse.append("snapshot_epoch_millis", rspUsOut.getEpochSecond()*1000L);
+			oos.writeObject(jsResponse.toString(4));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		JSONArray jsInstruments = jsResponse.getJSONArray(DeribitJSONrsp.glupkey);
-		for (int i = 0; i < jsInstruments.length(); i++) {
-			OptionContract oc = new OptionContract(jsInstruments.getJSONObject(i));
-			this.listedOptions.add(oc);
-			this.listedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
-		}
-		return listedOptions;
+	}
+
+
+	public List<OptionContract> getAllOptionContracts() {
+		return allOptionContracts;
 	}
 	
-	private JSONObject getFromWeb(){
-		String reqUrl = buildReq();
-		Fetcher f = new Fetcher(reqUrl);
-		JSONObject raw = f.fetch();
-		DeribitJSONrsp dr = new DeribitJSONrsp(raw);
-		rspUsIn = dr.getUsIn();
-		rspUsOut = dr.getUsOut();
-		return dr.getResultObject();
-	}
-	
-	public List<OptionContract> getListedOptions() {
-		return listedOptions;
-	}
-	
-	public SortedSet<Expiration> getListedExpirations() {
-		return listedExpirations;
+	public SortedSet<Expiration> getAllExpirations() {
+		return allExpirations;
 	}
 	
 	// https://www.deribit.com/api/v2/public/get_instruments?currency=ETH&expired=false&kind=option

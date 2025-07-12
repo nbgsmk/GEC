@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 public class OptionContract extends Instrument {
 
-	private final String    option_type;	                // "call",
-	private final BigDecimal strike;				            // 100000,
+	private final String		option_type;	// "call",
+	private final BigDecimal	strike;			// 100000,
 	
 	private Greeks greeks;
 

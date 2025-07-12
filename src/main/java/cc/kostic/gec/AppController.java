@@ -28,11 +28,8 @@ public class AppController {
 	public Button b_ticker;
 	@FXML
 	public TabPane opt_chains;
-	@FXML
-	private Button b_refr;
-	
-	
-	
+
+
 	
 	@FXML
 	public void onExpirationsClick(ActionEvent actionEvent) {
@@ -83,29 +80,39 @@ public class AppController {
 	public void onTickerClick(ActionEvent actionEvent) {
 	}
 	
-	public void onGetChainsClick(ActionEvent actionEvent) {
+	public void onGetFromWebClick(ActionEvent actionEvent) {
 		
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		// gis.writeToDisk();
-		
+		List<OptionContract> contracts = gis.getList(GetInstruments.SRC.WEB);
+		gis.writeToDisk();
+		prikaz(gis.getAllExpirations(), contracts);
+		System.out.println("wow");
+	}
+
+	public void onGetFromDiskClick(ActionEvent actionEvent) {
+
+		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getList(GetInstruments.SRC.DISK);
-		
+		prikaz(gis.getAllExpirations(), contracts);
+		System.out.println("wow");
+	}
+
+	private void prikaz(Set<Expiration> exps, List<OptionContract> contracts){
+
 		// for (OptionContract oc : contracts) {
 		// 	String s = oc.getInstrument_name();
 		// 	Ticker t = new Ticker(s);
 		// 	JSONObject gg = t.getResult();
 		// 	oc.setGreeks(new Greeks(gg));
 		// }
-		
-		Set<Expiration> exps = gis.getListedExpirations();
+
 		for (Expiration e : exps) {
 			Tab t = new Tab(e.getExpirationShortFmt());
 			String expirationName = "-" + t.getText() + "-";
 			String ocinfo = "";
-			for (int j = 0; j < contracts.size(); j++) {
-				OptionContract ocj = contracts.get(j);
-				if (ocj.getInstrument_name().contains(expirationName)) {
-					ocinfo += ocj.getInstrument_name() + " " + ocj.getExpirationString() + " " + ocj.getStrike() + " " + ocj.getOption_type() + "\n";
+			for (OptionContract oc : contracts) {
+				if (oc.getInstrument_name().contains(expirationName)) {
+					ocinfo += oc.getInstrument_name() + " " + oc.getExpirationString() + " " + oc.getStrike().toPlainString() + " " + oc.getOption_type() + "\n";
 				}
 			}
 			Label l = new Label();
@@ -115,8 +122,7 @@ public class AppController {
 			t.setContent(scroll);
 			opt_chains.getTabs().add(t);
 		}
-	
-		System.out.println("wow");
+
 	}
 }
 

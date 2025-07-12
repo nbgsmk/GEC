@@ -64,7 +64,12 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <Button fx:id="b_get_chains" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGetChainsClick" text="get option chains" />
+            <HBox>
+               <children>
+                  <Button fx:id="b_get_web" mnemonicParsing="false" onAction="#onGetFromWebClick" text="get from web" />
+                  <Button fx:id="b_get_disk" mnemonicParsing="false" onAction="#onGetFromDiskClick" text="from disk" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </top>

@@ -73,4 +73,22 @@
          </children>
       </VBox>
    </top>
+   <bottom>
+      <FlowPane fx:id="fl_statusLine" hgap="4.0" nodeOrientation="LEFT_TO_RIGHT" vgap="10.0">
+         <children>
+            <Label fx:id="tv_timestamp" text="_">
+               <graphic>
+                  <Label text="Timestamp:" />
+               </graphic></Label>
+            <Label fx:id="tv_items" text="_">
+               <graphic>
+                  <Label text="Count:" />
+               </graphic>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </padding>
+      </FlowPane>
+   </bottom>
 </BorderPane>

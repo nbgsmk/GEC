@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.json.JSONObject;
 
+import java.text.CompactNumberFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -28,9 +29,12 @@ public class AppController {
 	public Button b_ticker;
 	@FXML
 	public TabPane opt_chains;
+	@FXML
+	public Label tv_timestamp;
+	@FXML
+	public Label tv_items;
 
 
-	
 	@FXML
 	public void onExpirationsClick(ActionEvent actionEvent) {
 		// OK !
@@ -81,7 +85,6 @@ public class AppController {
 	}
 	
 	public void onGetFromWebClick(ActionEvent actionEvent) {
-		
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.WEB);
 		gis.writeToDisk();
@@ -89,23 +92,18 @@ public class AppController {
 		System.out.println("wow");
 	}
 
-	public void onGetFromDiskClick(ActionEvent actionEvent) {
 
+	public void onGetFromDiskClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.DISK);
 		prikaz(gis.getExpirations(), contracts);
 		System.out.println("wow");
 	}
 
+
+
 	private void prikaz(Set<Expiration> exps, List<OptionContract> contracts){
-
-		// for (OptionContract oc : contracts) {
-		// 	String s = oc.getInstrument_name();
-		// 	Ticker t = new Ticker(s);
-		// 	JSONObject gg = t.getResult();
-		// 	oc.setGreeks(new Greeks(gg));
-		// }
-
+		// tv_timestamp.textProperty().bind(GetInstruments.kaunt.asString());
 		for (Expiration e : exps) {
 			Tab t = new Tab(e.getExpirationShortFmt());
 			String expirationName = "-" + t.getText() + "-";
@@ -121,6 +119,8 @@ public class AppController {
 			scroll.setContent(l);
 			t.setContent(scroll);
 			opt_chains.getTabs().add(t);
+			// tv_timestamp.setText("todo");
+			tv_items.setText("exp/instr: " + exps.size() + "/" + contracts.size());
 		}
 
 	}

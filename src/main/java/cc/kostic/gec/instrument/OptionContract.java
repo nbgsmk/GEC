@@ -18,8 +18,12 @@ public class OptionContract extends Instrument {
 
 	public OptionContract(JSONObject o) {
 		super(o);
-		this.option_type   		 	        = o.getString("option_type");
-		this.strike    		 		        = o.getBigDecimal("strike");
+		this.option_type 	= o.getString("option_type");
+		this.strike 		= o.getBigDecimal("strike");
+		JSONObject tmp = o.optJSONObject("greeks", null);
+		if (tmp != null) {
+			this.greeks = new Greeks(tmp);
+		}
 	}
 
 

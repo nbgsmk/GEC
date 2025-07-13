@@ -1,22 +1,25 @@
 package cc.kostic.gec.endpoints.deribit;
 
+import cc.kostic.gec.instrument.Greeks;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
 import cc.kostic.gec.web.Fetcher;
+import javafx.beans.Observable;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class GetInstruments {
-	
+
+	private JSONObject jsResponse;
 	private final BaseURL b;
 	private final Currency currency;
 	private final Kind kind;
@@ -24,7 +27,9 @@ public class GetInstruments {
 	private Instant rspUsOut;
 	
 	private final List<OptionContract> allOptionContracts = new ArrayList<>();
-	private final SortedSet<Expiration> allExpirations = new TreeSet<>();
+	private final SortedSet<Expiration> sortedExpirations = new TreeSet<>();
+
+	public static SimpleIntegerProperty kaunt = new SimpleIntegerProperty();
 	
 	public enum SRC{
 		WEB,
@@ -46,21 +51,33 @@ public class GetInstruments {
 
 
 	public List<OptionContract> getContracts(SRC dataSource){
-		JSONObject jsResponse = null;
 		switch (dataSource){
 			case WEB -> {
 				jsResponse = getFromWeb();
+				JSONArray jsInstruments = jsResponse.getJSONArray(DeribitJSONrsp.glupkey);
+				for (int i = 0; i < jsInstruments.length(); i++) {
+					JSONObject obj = jsInstruments.getJSONObject(i);
+					obj = getGreeksFromWeb(obj);
+					OptionContract oc = new OptionContract(obj);
+					this.allOptionContracts.add(oc);
+					this.sortedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
+					kaunt.set(i);
+				}
 			}
+
 			case DISK -> {
 				jsResponse = getFromDisk();
+				JSONArray jsInstruments = jsResponse.getJSONArray(DeribitJSONrsp.glupkey);
+				for (int i = 0; i < jsInstruments.length(); i++) {
+					JSONObject obj = jsInstruments.getJSONObject(i);
+					OptionContract oc = new OptionContract(obj);
+					this.allOptionContracts.add(oc);
+					this.sortedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
+					kaunt.set(i);
+				}
 			}
 		}
-		JSONArray jsInstruments = jsResponse.getJSONArray(DeribitJSONrsp.glupkey);
-		for (int i = 0; i < jsInstruments.length(); i++) {
-			OptionContract oc = new OptionContract(jsInstruments.getJSONObject(i));
-			this.allOptionContracts.add(oc);
-			this.allExpirations.add(new Expiration(oc.getExpiration_timestamp()));
-		}
+
 		return allOptionContracts;
 	}
 	
@@ -81,34 +98,41 @@ public class GetInstruments {
 			 ObjectInputStream ois = new ObjectInputStream(bis);){
 			Object infile = ois.readObject();
 			if (infile instanceof String) {
-				rezult = new JSONObject((String) infile);
+				rezult = new JSONObject((String) infile);	// FULL FREEZE!! cast (String) inace se dobije naizgled ispravan json objekat ali nema potrebne podatke
 			}
 		} catch (ClassNotFoundException | IOException e) {
+			System.out.println(e.getMessage());
 			throw new RuntimeException(e);
 		}
 		return rezult;
 	}
 
 	public void writeToDisk() {
-		JSONObject jsResponse = getFromWeb();
-
 		try (FileOutputStream fos = new FileOutputStream("chain_oos.txt");
 			 BufferedOutputStream bos = new BufferedOutputStream(fos);
 			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
-			// jsResponse.append("snapshot_epoch_millis", rspUsOut.getEpochSecond()*1000L);
-			oos.writeObject(jsResponse.toString(4));
+			oos.writeObject(this.jsResponse.toString(4));
 		} catch (IOException e) {
+			System.out.println(e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
-
-
-
 	
 	public SortedSet<Expiration> getExpirations() {
-		return allExpirations;
+		return sortedExpirations;
 	}
-	
+
+
+	private JSONObject getGreeksFromWeb(JSONObject jsContract){
+		OptionContract contract = new OptionContract(jsContract);
+		String s = contract.getInstrument_name();
+		GetTicker t = new GetTicker(s);
+		JSONObject gg = t.getResult();
+		jsContract.accumulate("greeks", gg.getJSONObject("greeks"));
+		return jsContract;
+	}
+
+
 	// https://www.deribit.com/api/v2/public/get_instruments?currency=ETH&expired=false&kind=option
 	// expired=false
  	// kind=option

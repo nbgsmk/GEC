@@ -34,6 +34,8 @@ public class AppController {
 	public Label tv_items;
 	@FXML
 	public TabPane tp_test;
+	@FXML
+	public Button b_gamma;
 
 
 	@FXML
@@ -125,6 +127,42 @@ public class AppController {
 			// tv_timestamp.setText("todo");
 			tv_items.setText("exp/instr: " + exps.size() + "/" + contracts.size());
 		}
+
+	}
+
+	public void onGammaClick(ActionEvent actionEvent) {
+		// https://github.com/Matteo-Ferrara/gex-tracker
+		// https://www.reddit.com/r/options/comments/16t9pc8/skewadjusted_gex/
+		// https://www.cboe.com/insights/posts/volatility-insights-evaluating-the-market-impact-of-spx-0-dte-options/
+		// open_interest * gamma * 100 * k * spot_price * (1% * spot_price)
+		// 1) CALLgamma = open_interest * gamma * spot_price * 100 * (0.01 * spot_price)
+		// 2) PUTgamma  = open_interest * gamma * spot_price * 100 * (0.01 * spot_price) * (-1)
+		// 3) TOTSTRIKEgamma = CALLgamma+PUTgamma
+		// 4) EXPIRATIONgamma za sve strajkove u tom expirationu
+		//
+ 		// 5) isto to samo zameni traded_volume umesto open_interest
+
+		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
+		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.DISK);
+		Set<Expiration>  expirations = gis.getExpirations();
+		// fori contract
+		/*
+			fori expiration
+				fori strike
+					CALLg ...
+					PUTg ...
+					TOTSTRIKEg ...
+				}
+				EXPIRATIONg ...
+			}
+
+			graf: call & put gamma / strike
+			graf: tot_strike gamma  / strike
+		 */
+
+
+
+		System.out.println("wow");
 
 	}
 }

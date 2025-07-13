@@ -24,7 +24,7 @@
                      <children>
                         <ToolBar prefHeight="40.0" prefWidth="200.0">
                           <items>
-                            <Button mnemonicParsing="false" text="Button" />
+                            <Button fx:id="b_gamma" mnemonicParsing="false" onAction="#onGammaClick" text="Gamma" />
                               <Button mnemonicParsing="false" text="Button" />
                           </items>
                         </ToolBar>

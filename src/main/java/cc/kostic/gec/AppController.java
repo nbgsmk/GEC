@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.json.JSONObject;
 
-import java.text.CompactNumberFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -28,11 +27,13 @@ public class AppController {
 	@FXML
 	public Button b_ticker;
 	@FXML
-	public TabPane opt_chains;
+	public TabPane tp_chains;
 	@FXML
 	public Label tv_timestamp;
 	@FXML
 	public Label tv_items;
+	@FXML
+	public TabPane tp_test;
 
 
 	@FXML
@@ -41,10 +42,13 @@ public class AppController {
 		// JSONObject
 		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
 		List<String> epirations = ge.getList();
+		if ( ! tp_test.getTabs().isEmpty() ) {
+			tp_test.getTabs().clear();
+		}
 		for (String s : epirations) {
 			Tab t = new Tab();
 			t.setText(s);
-			opt_chains.getTabs().add(t);
+			tp_test.getTabs().add(t);
 			GridPane gp = new GridPane();
 			gp.setGridLinesVisible(true);		// STOPSHIP
 			t.setContent(gp);
@@ -71,7 +75,6 @@ public class AppController {
 	
 	@FXML
 	public void onInstrumentSClick(ActionEvent actionEvent) {
-		// NOK !
 		// JSONObject
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> postojeci_kontrakti = gis.getContracts(GetInstruments.SRC.WEB);
@@ -118,7 +121,7 @@ public class AppController {
 			ScrollPane scroll = new ScrollPane();
 			scroll.setContent(l);
 			t.setContent(scroll);
-			opt_chains.getTabs().add(t);
+			tp_chains.getTabs().add(t);
 			// tv_timestamp.setText("todo");
 			tv_items.setText("exp/instr: " + exps.size() + "/" + contracts.size());
 		}

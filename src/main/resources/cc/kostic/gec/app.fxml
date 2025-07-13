@@ -10,33 +10,43 @@
          <tabs>
             <Tab closable="false" text="chains">
                <content>
-                  <VBox fx:id="vb_chains" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
-                     <HBox>
-                        <children>
-                        	<Button fx:id="b_expirations" nodeOrientation="LEFT_TO_RIGHT" onAction="#onExpirationsClick" text="expirations" />
-                           <Button fx:id="b_instrument" mnemonicParsing="false" onAction="#onInstrumentClick" text="instrument" />
-                           <Button fx:id="b_instruments" mnemonicParsing="false" onAction="#onInstrumentSClick" text="instrumentS" />
-                           <Button fx:id="b_ticker" mnemonicParsing="false" onAction="#onTickerClick" text="ticker" />
-                        </children>
-                     </HBox>
-                     <TabPane fx:id="opt_chains" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
-            
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
+                   <VBox fx:id="vb_chains" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
+                       <TabPane fx:id="tp_chains" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
+                       <padding>
+                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                       </padding>
+                   </VBox>
                </content>
             </Tab>
 			 <Tab closable="false" text="greeks">
 				 <content>
 					 <VBox fx:id="vb_greeks" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
-					 </VBox>
+                     <children>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                          <items>
+                            <Button mnemonicParsing="false" text="Button" />
+                              <Button mnemonicParsing="false" text="Button" />
+                          </items>
+                        </ToolBar>
+                     </children></VBox>
 				 </content>
 			 </Tab>
 			 <Tab closable="false" text="test">
 				 <content>
-					 <VBox fx:id="vb_test" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
-					 </VBox>
+                     <VBox fx:id="vb_test" prefHeight="400.0" prefWidth="700.0" spacing="5.0">
+                     <ToolBar>
+                        <items>
+                                 <Button fx:id="b_expirations" nodeOrientation="LEFT_TO_RIGHT" onAction="#onExpirationsClick" text="expirations" />
+                                 <Button fx:id="b_instrument" mnemonicParsing="false" onAction="#onInstrumentClick" text="instrument" />
+                                 <Button fx:id="b_instruments" mnemonicParsing="false" onAction="#onInstrumentSClick" text="instrumentS" />
+                                 <Button fx:id="b_ticker" mnemonicParsing="false" onAction="#onTickerClick" text="ticker" />
+                        </items>
+                     </ToolBar>
+                         <TabPane fx:id="tp_test" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
+                         <padding>
+                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                         </padding>
+                     </VBox>
 				 </content>
 			 </Tab>
          </tabs>

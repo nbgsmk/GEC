@@ -2,36 +2,42 @@ package cc.kostic.gec.endpoints.deribit;
 
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.CurrencyPair;
+import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
 import cc.kostic.gec.web.Fetcher;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GetExpirations {
 	
-	private final BaseURL b;
+	private final String reqUrl;
+	private DeribitRsp dr;
+	
 	private final Currency currency;
 	private final Kind kind;
 	private final CurrencyPair currencyPair;
-	
 	
 	public GetExpirations(Currency currency, Kind kind, CurrencyPair currencyPair) {
 		this.currency = currency;
 		this.kind = kind;
 		this.currencyPair = currencyPair;
-		b = new BaseURL();
+		this.reqUrl = buildReq(new BaseURL(), currency, kind, currencyPair);
 	}
+
 	public GetExpirations(Currency currency, Kind kind) {
 		this.currency = currency;
 		this.kind = kind;
 		this.currencyPair = null;
-		b = new BaseURL();
+		this.reqUrl = buildReq(new BaseURL(), currency, kind, this.currencyPair);
 	}
 	
-	private String buildReq(){
+	private String buildReq(BaseURL b, Currency currency, Kind kind, CurrencyPair currencyPair){
 		// return "https://www.deribit.com/api/v2/public/ get_expirations? currency=ETH & kind=option";
 		// return "https://www.deribit.com/api/v2/public/ get_expirations? currency=ETH & currency_pair=eth_usdc & kind=option";
 		
@@ -42,24 +48,39 @@ public class GetExpirations {
 		}
 	}
 
-	private JSONObject getJSrsp(){
-		String reqUrl = buildReq();
-		Fetcher f = new Fetcher(reqUrl);
-		DeribitJSONrsp dr = new DeribitJSONrsp(f.fetch());
-		return dr.getResultObject();
+	public void run(){
+		Fetcher f = new Fetcher(this.reqUrl);
+		JSONObject jsRsp = f.fetch();
+		this.dr = new DeribitRsp(jsRsp);
 	}
 	
-	public List<String> getList(){
-		JSONObject jSrsp = getJSrsp();
-		JSONObject currnc = jSrsp.getJSONObject(currency.getName().toLowerCase());
-		JSONArray knd = currnc.getJSONArray(kind.getName().toLowerCase());
-		List<String> rezultat = new ArrayList<>();
-		for (int i = 0; i < knd.length(); i++) {
-			rezultat.add(knd.getString(i));
-		}
-		return rezultat;
+	public String getJsonRpcVer(){
+		return dr.getJsonRpcVersion();
 	}
 	
+	public List<String> getExpirationStrings(){
+		Map<String, ?> mapa = dr.getResultObject(HashMap.class);
+		// rezultat je nested mapa / mapa / List
+		// "result" / "eth" / "option" / -> lista expirations-a
+		Map<String, ?> crnc = (Map<String, ?>) mapa.get(currency.getName().toLowerCase());
+		List<String> knd = (List<String>) crnc.get(kind.getName().toLowerCase());
+		return knd;
+	}
+	public Object getErrorObject(){
+		return dr.getErrorObject();
+	}
+	public boolean isTestnet(){
+		return dr.isTestnet();
+	}
+	public Instant getMicroSecIn(){
+		return dr.getMicroSecIn();
+	}
+	public Instant getMicroSecOut(){
+		return dr.getMicroSecOut();
+	}
+	public Long getMicroSecDiff(){
+		return dr.getMicroSecDiff();
+	}
 	
 	
 	

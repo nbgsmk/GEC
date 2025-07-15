@@ -3,6 +3,8 @@ package cc.kostic.gec;
 import cc.kostic.gec.endpoints.deribit.GetExpirations;
 import cc.kostic.gec.endpoints.deribit.GetInstrument;
 import cc.kostic.gec.endpoints.deribit.GetInstruments;
+import cc.kostic.gec.endpoints.deribit.GetTicker;
+import cc.kostic.gec.instrument.Instrument;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
@@ -13,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -36,62 +39,19 @@ public class AppController {
 	public TabPane tp_test;
 	@FXML
 	public Button b_gamma;
-
-
-	@FXML
-	public void onExpirationsClick(ActionEvent actionEvent) {
-		// OK !
-		// JSONObject
-		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
-		List<String> epirations = ge.getList();
-		if ( ! tp_test.getTabs().isEmpty() ) {
-			tp_test.getTabs().clear();
-		}
-		for (String s : epirations) {
-			Tab t = new Tab();
-			t.setText(s);
-			tp_test.getTabs().add(t);
-			GridPane gp = new GridPane();
-			gp.setGridLinesVisible(true);		// STOPSHIP
-			t.setContent(gp);
-			gp.add(new Label("Row 0, Col 0"), 0, 0);
-			gp.add(new Label("Row 1, Col 1"), 1, 1);
-		}
-		// tv_stat.setText("ima " + epirations.size());
-		
-		System.out.println("expirations");
-
-	}
 	
-	@FXML
-	public void onInstrumentClick(ActionEvent actionEvent) {
-		// OK !
-		// JSONObject
-		GetInstrument gi = new GetInstrument("BTC-27MAR26-105000-C");
-		JSONObject ii = gi.getResult();
-		// tv_stat.setText(ii.toString());
-		
-		System.out.println(ii);
-		System.out.println("instrument");
-	}
 	
-	@FXML
-	public void onInstrumentSClick(ActionEvent actionEvent) {
-		// JSONObject
-		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> postojeci_kontrakti = gis.getContracts(GetInstruments.SRC.WEB);
-		System.out.println(postojeci_kontrakti);
-		System.out.println("instrument-s");
-		
-	}
 	
-	@FXML
-	public void onTickerClick(ActionEvent actionEvent) {
-	}
+	
+	
+	/// ////////////////////////////////////
+	/// CHAINS
+	/// ////////////////////////////////////
+	
 	
 	public void onGetFromWebClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.WEB);
+		List<OptionContract> contracts = gis.getResult(GetInstruments.SRC.WEB);
 		gis.writeToDisk();
 		prikaz(gis.getExpirations(), contracts);
 		System.out.println("wow");
@@ -100,7 +60,7 @@ public class AppController {
 
 	public void onGetFromDiskClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.DISK);
+		List<OptionContract> contracts = gis.getResult(GetInstruments.SRC.DISK);
 		prikaz(gis.getExpirations(), contracts);
 		System.out.println("wow");
 	}
@@ -129,7 +89,14 @@ public class AppController {
 		}
 
 	}
-
+	
+	
+	
+	
+	/// ////////////////////////////////////
+	/// GAMMA
+	/// ////////////////////////////////////
+	
 	public void onGammaClick(ActionEvent actionEvent) {
 		// https://github.com/Matteo-Ferrara/gex-tracker
 		// https://www.reddit.com/r/options/comments/16t9pc8/skewadjusted_gex/
@@ -143,7 +110,7 @@ public class AppController {
  		// 5) isto to samo zameni traded_volume umesto open_interest
 
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getContracts(GetInstruments.SRC.DISK);
+		List<OptionContract> contracts = gis.getResult(GetInstruments.SRC.DISK);
 		Set<Expiration>  expirations = gis.getExpirations();
 		// fori contract
 		/*
@@ -159,11 +126,74 @@ public class AppController {
 			graf: call & put gamma / strike
 			graf: tot_strike gamma  / strike
 		 */
-
-
+		
+		
+		for (OptionContract oc : contracts) {
+			BigDecimal strajk = oc.getStrike();
+			
+		}
 
 		System.out.println("wow");
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/// ////////////////////////////////////
+	/// TEST
+	/// ////////////////////////////////////
+	
+	@FXML
+	public void onExpirationsClick(ActionEvent actionEvent) {
+		// OK !
+		// JSONObject
+		GetExpirations ge = new GetExpirations(Currency.ETH, Kind.OPTION);
+		ge.run();
+		List<String> epirations = ge.getExpirationStrings();
+		if ( ! tp_test.getTabs().isEmpty() ) {
+			tp_test.getTabs().clear();
+		}
+		for (String s : epirations) {
+			Tab t = new Tab();
+			t.setText(s);
+			tp_test.getTabs().add(t);
+			GridPane gp = new GridPane();
+			t.setContent(gp);
+			gp.add(new Label("Row 0, Col 0"), 0, 0);
+			gp.add(new Label("Row 1, Col 1"), 1, 1);
+		}
+		// tv_stat.setText("ima " + epirations.size());
+		
+		System.out.println("expirations");
+		
+	}
+	
+	@FXML
+	public void onInstrumentClick(ActionEvent actionEvent) {
+		GetInstrument gi = new GetInstrument("BTC-27MAR26-105000-C");
+		gi.run();
+		Instrument ii = gi.getResult();
+		System.out.println(ii);
+		System.out.println("instrument");
+	}
+	
+	@FXML
+	public void onInstrumentSClick(ActionEvent actionEvent) {
+		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
+		List<OptionContract> postojeci_kontrakti = gis.getResult(GetInstruments.SRC.WEB);
+		System.out.println(postojeci_kontrakti);
+		System.out.println("instrument-s");
+	}
+	
+	@FXML
+	public void onTickerClick(ActionEvent actionEvent) {
+	}
+	
 }
 

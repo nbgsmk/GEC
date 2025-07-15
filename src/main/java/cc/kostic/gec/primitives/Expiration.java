@@ -59,4 +59,9 @@ public class Expiration implements Comparable<Expiration>{
 		return Long.compare(this.expiration_timestamp.longValue(), o.expiration_timestamp.longValue());			// normalni sort
 		// return Long.compare(o.expiration_timestamp.longValue(), this.expiration_timestamp.longValue());		// najdalji datumi prvo
 	}
+	
+	@Override
+	public String toString() {
+		return getExpirationShortFmt();
+	}
 }

@@ -12,7 +12,7 @@ public class FutureContract extends Instrument {
 
 
 	public FutureContract(JSONObject o) {
-		super(o);
+		super(null);
 		this.future_type   		 	        = o.getString("future_type");
 		this.max_leverage    		 		= o.getBigDecimal("max_leverage");
 		this.max_liquidation_commission    	= o.getBigDecimal("max_liquidation_commission");

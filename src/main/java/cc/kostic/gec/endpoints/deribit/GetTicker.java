@@ -19,16 +19,16 @@ public class GetTicker {
 	}
 	
 	public JSONObject getResult(){
-		DeribitJSONrsp dr;
+		DeribitRsp dr;
 		try {
 			Thread.sleep(100);
 			String reqUrl = buildReq();
 			Fetcher f = new Fetcher(reqUrl);
-			dr = new DeribitJSONrsp(f.fetch());
+			dr = new DeribitRsp(f.fetch());
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-		return dr.getResultObject();
+		return dr.getResultObject(null);
 	}
 	
 	

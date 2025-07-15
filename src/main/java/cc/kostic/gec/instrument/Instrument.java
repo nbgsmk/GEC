@@ -9,175 +9,130 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class Instrument {
-
-	private final JSONObject rawJs;                             // mozda ce da zatreba
-
-	private final String		price_index;					// "btc_usd",
-	private final Boolean		rfq;							// false,
-	private final String		kind;							// "option",
-	private final String		instrument_name;				// "BTC-26JUN26-100000-C",
-	private final BigDecimal	maker_commission;				// 0.0003,
-	private final BigDecimal	taker_commission;				// 0.0003,
-	private final String		instrument_type;				// "reversed",
-	private final BigDecimal	expiration_timestamp;			// 1782460800000,
-	private final BigDecimal	creation_timestamp;				// 1750924810000,
-	private final Boolean		is_active;						// true,
-	// OPTION // private final String	option_type;			// "call",
-	private final BigDecimal	contract_size;					// 1,
-	private final BigDecimal	tick_size;						// 0.0001,
-	// OPTION // private final	BigDecimal      strike;			// 100000,
-	private final BigDecimal	instrument_id;					// 479190,
-	private final String		settlement_period;				// "month",
-	private final BigDecimal	min_trade_amount;				// 0.1,
-	private final BigDecimal	block_trade_commission;			// 0.0003,
-	private final BigDecimal	block_trade_min_trade_amount;	// 25,
-	private final BigDecimal	block_trade_tick_size;			// 0.0001,
-	private final String		settlement_currency;			// "BTC",
-	private final String		base_currency;					// "BTC",
-	private final String		counter_currency;				// "USD",
-	private final String		quote_currency;					// "BTC",
-	// private final List<BigDecimal>	tick_size_steps;			// [		{		"tick_size":		0.0005,		"above_price":		0.005		}		]
-
-
-	// OPTION
-	//
-	// https://www.deribit.com/api/v2/public/get_instrument
-	// ?instrument_name=
-	// BTC-26JUN26-100000-C
-	// --------------------------------------------------------------------------------
-	// {
-	//	"jsonrpc": "2.0",
-	//	"result": {
-	//		"price_index": "btc_usd",
-	//		"rfq": false,
-	//		"kind": "option",                                // OPTION / FUTURE specific
-	//		"instrument_name": "BTC-26JUN26-100000-C",
-	//		"maker_commission": 0.0003,
-	//		"taker_commission": 0.0003,
-	//		"instrument_type": "reversed",
-	//		"expiration_timestamp": 1782460800000,
-	//		"creation_timestamp": 1750924810000,
-	//		"is_active": true,
-	//		"option_type": "call",                           // OPTION only
-	//		"contract_size": 1,
-	//		"tick_size": 0.0001,
-	//		"strike": 100000,                                // OPTION only
-	//		"instrument_id": 479190,
-	//		"settlement_period": "month",
-	//		"min_trade_amount": 0.1,
-	//		"block_trade_commission": 0.0003,
-	//		"block_trade_min_trade_amount": 25,
-	//		"block_trade_tick_size": 0.0001,
-	//		"settlement_currency": "BTC",
-	//		"base_currency": "BTC",
-	//		"counter_currency": "USD",
-	//		"quote_currency": "BTC",
-	//		"tick_size_steps": [
-	//	    {
-	//	      "tick_size": 0.0005,
-	//	      "above_price": 0.005
-	//	    }
-	//	  ]
-	//	},
-	//	"usIn": 1752066535270080,
-	//	"usOut": 1752066535270470,
-	//	"usDiff": 390,
-	//	"testnet": false
-	// }
+	
+	/*
+	
+	OPTION
+	
+	https://www.deribit.com/api/v2/public/get_instrument
+	?instrument_name=
+	BTC-26JUN26-100000-C
+	--------------------------------------------------------------------------------
+	{
+		"jsonrpc": "2.0",
+		"result": {
+			"price_index": "btc_usd",
+			"rfq": false,
+			"kind": "option",                                // OPTION / FUTURE specific
+			"instrument_name": "BTC-26JUN26-100000-C",
+			"maker_commission": 0.0003,
+			"taker_commission": 0.0003,
+			"instrument_type": "reversed",
+			"expiration_timestamp": 1782460800000,
+			"creation_timestamp": 1750924810000,
+			"is_active": true,
+			"option_type": "call",                           // OPTION only
+			"contract_size": 1,
+			"tick_size": 0.0001,
+			"strike": 100000,                                // OPTION only
+			"instrument_id": 479190,
+			"settlement_period": "month",
+			"min_trade_amount": 0.1,
+			"block_trade_commission": 0.0003,
+			"block_trade_min_trade_amount": 25,
+			"block_trade_tick_size": 0.0001,
+			"settlement_currency": "BTC",
+			"base_currency": "BTC",
+			"counter_currency": "USD",
+			"quote_currency": "BTC",
+			"tick_size_steps": [
+		    {
+		      "tick_size": 0.0005,
+		      "above_price": 0.005
+		    }
+		  ]
+		},
+		"usIn": 1752066535270080,
+		"usOut": 1752066535270470,
+		"usDiff": 390,
+		"testnet": false
+	}
+	
+	*/
 
 
-	// FUTURE
-	//
-	// https://www.deribit.com/api/v2/public/get_instrument
-	// ?instrument_name=
-	// BTC_USDC-PERPETUAL
-	// --------------------------------------------------------------------------------
-	// {
-	//   "jsonrpc": "2.0",
-	//   "result": {
-	//     "price_index": "btc_usdc",
-	//     "rfq": false,
-	//     "kind": "future",
-	//     "instrument_name": "BTC_USDC-PERPETUAL",
-	//     "maker_commission": 0,
-	//     "taker_commission": 0.0005,
-	//     "instrument_type": "linear",
-	//     "expiration_timestamp": 32503708800000,
-	//     "creation_timestamp": 1646824342000,
-	//     "is_active": true,
-	//     "contract_size": 0.001,
-	//     "tick_size": 1,
-	//     "instrument_id": 211704,
-	//     "settlement_period": "perpetual",
-	//     "min_trade_amount": 0.001,
-	//     "future_type": "linear",                     // FUTURE only
-	//     "max_leverage": 50,                          // FUTURE only
-	//     "max_liquidation_commission": 0.0075,        // FUTURE only
-	//     "block_trade_commission": 0.0001,
-	//     "block_trade_min_trade_amount": 200000,
-	//     "block_trade_tick_size": 1,
-	//     "settlement_currency": "USDC",
-	//     "base_currency": "BTC",
-	//     "counter_currency": "USDC",
-	//     "quote_currency": "USDC",
-	//     "tick_size_steps": []
-	//   },
-	//   "usIn": 1752066289979842,
-	//   "usOut": 1752066289980054,
-	//   "usDiff": 212,
-	//   "testnet": false
-	// }
+	/*
+	
+	FUTURE
+	
+	https://www.deribit.com/api/v2/public/get_instrument
+	?instrument_name=
+	BTC_USDC-PERPETUAL
+	--------------------------------------------------------------------------------
+	{
+	  "jsonrpc": "2.0",
+	  "result": {
+	    "price_index": "btc_usdc",
+	    "rfq": false,
+	    "kind": "future",
+	    "instrument_name": "BTC_USDC-PERPETUAL",
+	    "maker_commission": 0,
+	    "taker_commission": 0.0005,
+	    "instrument_type": "linear",
+	    "expiration_timestamp": 32503708800000,
+	    "creation_timestamp": 1646824342000,
+	    "is_active": true,
+	    "contract_size": 0.001,
+	    "tick_size": 1,
+	    "instrument_id": 211704,
+	    "settlement_period": "perpetual",
+	    "min_trade_amount": 0.001,
+	    "future_type": "linear",                     // FUTURE only
+	    "max_leverage": 50,                          // FUTURE only
+	    "max_liquidation_commission": 0.0075,        // FUTURE only
+	    "block_trade_commission": 0.0001,
+	    "block_trade_min_trade_amount": 200000,
+	    "block_trade_tick_size": 1,
+	    "settlement_currency": "USDC",
+	    "base_currency": "BTC",
+	    "counter_currency": "USDC",
+	    "quote_currency": "USDC",
+	    "tick_size_steps": []
+	  },
+	  "usIn": 1752066289979842,
+	  "usOut": 1752066289980054,
+	  "usDiff": 212,
+	  "testnet": false
+	}
+	
+	*/
 
-
-	public Instrument(JSONObject o) {
-		this.rawJs = o;
-
-		this.price_index                    = o.getString("price_index");
-		this.rfq    		 		        = o.getBoolean("rfq");
-		this.kind    		 		        = o.getString("kind");
-		this.instrument_name                = o.getString("instrument_name");
-		this.maker_commission               = o.getBigDecimal("maker_commission");
-		this.taker_commission               = o.getBigDecimal("taker_commission");
-		this.instrument_type                = o.getString("instrument_type");
-		// this.expiration_timestamp        = o.optBigDecimal("expiration_timestamp", null).longValue();
-		this.expiration_timestamp           = o.getBigDecimal("expiration_timestamp");
-		this.creation_timestamp             = o.getBigDecimal("creation_timestamp");
-		this.is_active    		 	        = o.getBoolean("is_active");
-		// samo OPTION   this.option_type   = o.getString("option_type");
-		this.contract_size   		        = o.getBigDecimal("contract_size");
-		this.tick_size    		 	        = o.getBigDecimal("tick_size");
-		// samo OPTION  this.strike         = o.getBigDecimal("strike");
-		this.instrument_id                  = o.getBigDecimal("instrument_id");
-		this.settlement_period    	        = o.getString("settlement_period");
-		this.min_trade_amount    	        = o.getBigDecimal("min_trade_amount");
-		this.block_trade_commission         = o.getBigDecimal("block_trade_commission");
-		this.block_trade_min_trade_amount   = o.getBigDecimal("block_trade_min_trade_amount");
-		this.block_trade_tick_size          = o.getBigDecimal("block_trade_tick_size");
-		this.settlement_currency   	        = o.getString("settlement_currency");
-		this.base_currency    		        = o.getString("base_currency");
-		this.counter_currency    	        = o.getString("counter_currency");
-		this.quote_currency    		        = o.getString("quote_currency");
-		// this.tick_size_steps    	        = o.getJSONArray("tick_size_steps");
-
+	private final Map<String, ?> raw;                             // mozda ce da zatreba
+	
+	public Instrument(Map<String, ?> o) {
+		this.raw = o;
+		
 	}
 
 
 	/// ////////////////
 	// BOJLER
 	/// ////////////////
-	public JSONObject getRawJSON(){
-		return this.rawJs;
+	public Map<String,?> getRawMap(){
+		return this.raw;
 	}
 	public String getPrice_index() {
-		return price_index;
+		return raw.get("price_index").toString();
 	}
 	public Boolean getRfq() {
-		return rfq;
+		return (Boolean) raw.get("rfq");
 	}
 	public Kind getKind() {
-		return switch (kind) {
+		String k = (String) raw.get("kind");
+		return switch (k) {
 			case "option" -> Kind.OPTION;
 			case "future" -> Kind.FUTURE;
 			case "option_combo" -> Kind.OPTION_COMBO;
@@ -186,61 +141,61 @@ public class Instrument {
 		};
 	}
 	public String getInstrument_name() {
-		return instrument_name;
+		return raw.get("instrument_name").toString();
 	}
 	public BigDecimal getMaker_commission() {
-		return maker_commission;
+		return new BigDecimal(  raw.get("maker_commission").toString() );
 	}
 	public BigDecimal getTaker_commission() {
-		return taker_commission;
+		return new BigDecimal(  raw.get("taker_commission").toString() );
 	}
 	public String getInstrument_type() {
-		return instrument_type;
+		return raw.get("instrument_type").toString();
 	}
 	public BigDecimal getExpiration_timestamp() {
-		return expiration_timestamp;
+		return new BigDecimal(  raw.get("expiration_timestamp").toString() );
 	}
 	public BigDecimal getCreation_timestamp() {
-		return creation_timestamp;
+		return new BigDecimal(  raw.get("creation_timestamp").toString() );
 	}
 	public Boolean getIs_active() {
-		return is_active;
+		return (Boolean) raw.get("is_active");
 	}
 	public BigDecimal getContract_size() {
-		return contract_size;
+		return new BigDecimal(  raw.get("contract_size").toString() );
 	}
 	public BigDecimal getTick_size() {
-		return tick_size;
+		return new BigDecimal(  raw.get("tick_size").toString() );
 	}
 	public BigDecimal getInstrument_id() {
-		return instrument_id;
+		return new BigDecimal(  raw.get("instrument_id").toString() );
 	}
 	public String getSettlement_period() {
-		return settlement_period;
+		return raw.get("settlement_period").toString();
 	}
 	public BigDecimal getMin_trade_amount() {
-		return min_trade_amount;
+		return new BigDecimal(  raw.get("min_trade_amount").toString() );
 	}
 	public BigDecimal getBlock_trade_commission() {
-		return block_trade_commission;
+		return new BigDecimal(  raw.get("block_trade_commission").toString() );
 	}
 	public BigDecimal getBlock_trade_min_trade_amount() {
-		return block_trade_min_trade_amount;
+		return new BigDecimal(  raw.get("block_trade_min_trade_amount").toString() );
 	}
 	public BigDecimal getBlock_trade_tick_size() {
-		return block_trade_tick_size;
+		return new BigDecimal(  raw.get("block_trade_tick_size").toString() );
 	}
 	public String getSettlement_currency() {
-		return settlement_currency;
+		return raw.get("settlement_currency").toString();
 	}
 	public String getBase_currency() {
-		return base_currency;
+		return raw.get("base_currency").toString();
 	}
 	public String getCounter_currency() {
-		return counter_currency;
+		return raw.get("counter_currency").toString();
 	}
 	public String getQuote_currency() {
-		return quote_currency;
+		return raw.get("quote_currency").toString();
 	}
 
 
@@ -249,7 +204,7 @@ public class Instrument {
 	/// /////////////////////
 
 	public String getExpirationString(){
-		Instant instant = Instant.ofEpochMilli(this.expiration_timestamp.longValue());
+		Instant instant = Instant.ofEpochMilli(getExpiration_timestamp().longValue());
 		ZonedDateTime zdt = instant.atZone(ZoneId.of("UTC"));
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("ddMMMyy");
 		String s = fmt.format(zdt);
@@ -257,14 +212,14 @@ public class Instrument {
 	}
 
 	public Instant getExpirationInstant() {
-		return Instant.ofEpochMilli(this.expiration_timestamp.longValue());
+		return Instant.ofEpochMilli(getExpiration_timestamp().longValue());
 	}
 
 
+	@Override
 	public String toString() {
 		return this.getInstrument_name();
 	}
-
-
+	
 	
 }

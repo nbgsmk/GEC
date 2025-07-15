@@ -36,3 +36,4 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/lib/json-20250517.jar

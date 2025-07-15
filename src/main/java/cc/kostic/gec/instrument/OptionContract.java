@@ -3,32 +3,30 @@ package cc.kostic.gec.instrument;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class OptionContract extends Instrument {
 
-	private final String		option_type;	// "call",
-	private final BigDecimal	strike;			// 100000,
+	private final String		option_type_str;	// "call",
+	private final BigDecimal	strike;				// 100000,
 	
-	private Greeks greeks;
+	
+	// private Ticker ticker;
 
 	public enum OPTION_TYPE {
 		CALL,
 		PUT
 	}
 
-	public OptionContract(JSONObject o) {
+	public OptionContract(Map<String, ?> o) {
 		super(o);
-		this.option_type 	= o.getString("option_type");
-		this.strike 		= o.getBigDecimal("strike");
-		JSONObject tmp = o.optJSONObject("greeks", null);
-		if (tmp != null) {
-			this.greeks = new Greeks(tmp);
-		}
+		this.option_type_str 	= o.get("option_type").toString();
+		this.strike 			= new BigDecimal( o.get("strike").toString() );
 	}
 
 
 	public OPTION_TYPE getOption_type() {
-		if(this.option_type.equalsIgnoreCase("call")) {
+		if(this.option_type_str.equalsIgnoreCase("call")) {
 			return OPTION_TYPE.CALL;
 		} else {
 			return OPTION_TYPE.PUT;
@@ -39,13 +37,6 @@ public class OptionContract extends Instrument {
 		return strike;
 	}
 	
-	public Greeks getGreeks() {
-		return greeks;
-	}
-	
-	public void setGreeks(Greeks greeks) {
-		this.greeks = greeks;
-	}
 }
 
 

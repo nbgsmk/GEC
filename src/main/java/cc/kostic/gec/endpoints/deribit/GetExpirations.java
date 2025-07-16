@@ -84,73 +84,77 @@ public class GetExpirations {
 	
 	
 	
-	// https://www.deribit.com/api/v2/public/get_expirations?currency=ETH&kind=any
-	// kind = any
-	// --------------------------------------------------------------------------------
-	// {
-	//   "jsonrpc": "2.0",
-	//   "result": {
-	//     "eth": {
-	//       "option": [
-	//         "6JUL25",
-	//         "7JUL25",
-	//         "8JUL25",
-	//         "11JUL25",
-	//         "18JUL25",
-	//         "25JUL25",
-	//         "29AUG25",
-	//         "26SEP25",
-	//         "26DEC25",
-	//         "27MAR26",
-	//         "26JUN26"
-	//       ],
-	//       "future": [
-	//         "11JUL25",
-	//         "18JUL25",
-	//         "25JUL25",
-	//         "29AUG25",
-	//         "26SEP25",
-	//         "26DEC25",
-	//         "27MAR26",
-	//         "26JUN26",
-	//         "PERPETUAL"
-	//       ]
-	//     }
-	//   },
-	//   "usIn": 1751730924094340,
-	//   "usOut": 1751730924094498,
-	//   "usDiff": 158,
-	//   "testnet": false
-	// }
+	/*
+		https://www.deribit.com/api/v2/public/get_expirations?currency=ETH&kind=any
+		kind = any
+		--------------------------------------------------------------------------------
+		{
+		  "jsonrpc": "2.0",
+		  "result": {
+			"eth": {
+			  "option": [
+				"6JUL25",
+				"7JUL25",
+				"8JUL25",
+				"11JUL25",
+				"18JUL25",
+				"25JUL25",
+				"29AUG25",
+				"26SEP25",
+				"26DEC25",
+				"27MAR26",
+				"26JUN26"
+			  ],
+			  "future": [
+				"11JUL25",
+				"18JUL25",
+				"25JUL25",
+				"29AUG25",
+				"26SEP25",
+				"26DEC25",
+				"27MAR26",
+				"26JUN26",
+				"PERPETUAL"
+			  ]
+			}
+		  },
+		  "usIn": 1751730924094340,
+		  "usOut": 1751730924094498,
+		  "usDiff": 158,
+		  "testnet": false
+		}
+	*/
 	
 	
-	// https://www.deribit.com/api/v2/public/get_expirations?currency=ETH&kind=option
-	// kind = option
-	// --------------------------------------------------------------------------------
-	// {
-	//   "jsonrpc": "2.0",
-	//   "result": {
-	//     "eth": {
-	//       "option": [
-	//         "6JUL25",
-	//         "7JUL25",
-	//         "8JUL25",
-	//         "11JUL25",
-	//         "18JUL25",
-	//         "25JUL25",
-	//         "29AUG25",
-	//         "26SEP25",
-	//         "26DEC25",
-	//         "27MAR26",
-	//         "26JUN26"
-	//       ]
-	//     }
-	//   },
-	//   "usIn": 1751730976619923,
-	//   "usOut": 1751730976620097,
-	//   "usDiff": 174,
-	//   "testnet": false
-	// }
+	/*
+		https://www.deribit.com/api/v2/public/get_expirations?currency=ETH&kind=option
+		kind = option
+		--------------------------------------------------------------------------------
+		{
+		  "jsonrpc": "2.0",
+		  "result": {
+			"eth": {
+			  "option": [
+				"6JUL25",
+				"7JUL25",
+				"8JUL25",
+				"11JUL25",
+				"18JUL25",
+				"25JUL25",
+				"29AUG25",
+				"26SEP25",
+				"26DEC25",
+				"27MAR26",
+				"26JUN26"
+			  ]
+			}
+		  },
+		  "usIn": 1751730976619923,
+		  "usOut": 1751730976620097,
+		  "usDiff": 174,
+		  "testnet": false
+		}
+	*/
 	
 	
 }

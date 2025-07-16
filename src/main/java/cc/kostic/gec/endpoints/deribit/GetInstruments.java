@@ -18,6 +18,7 @@ public class GetInstruments {
 	private final String reqUrl;
 	
 	private JSONObject jsResponse;
+	private DeribitRsp dr;
 	
 	private final List<OptionContract> allOptionContracts = new ArrayList<>();
 	private final SortedSet<Expiration> sortedExpirations = new TreeSet<>();
@@ -51,7 +52,7 @@ public class GetInstruments {
 	public List<OptionContract> getResult(SRC dataSource){
 		switch (dataSource){
 			case WEB -> {
-				DeribitRsp dr = getFromWeb();
+				dr = getFromWeb();
 				List<?> hashMapovi = dr.getResultObject(List.class);
 				for (int i = 0; i < hashMapovi.size(); i++) {
 					Map<String, ?> hm = (Map<String, ?>) hashMapovi.get(i);
@@ -63,14 +64,13 @@ public class GetInstruments {
 			}
 
 			case DISK -> {
-				jsResponse = getFromDisk();
-				// for (int i = 0; i < jsInstruments.length(); i++) {
-				// 	JSONObject obj = jsInstruments.getJSONObject(i);
-				// 	OptionContract oc = new OptionContract(obj);
-				// 	this.allOptionContracts.add(oc);
-				// 	this.sortedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
-				// 	kaunt.set(i);
-				// }
+				dr = getFromDisk();
+				List<Map<String, ?>> list = dr.getResultObject(List.class);
+				for (int i = 0; i < list.size(); i++) {
+					OptionContract oc = new OptionContract(list.get(i));
+					this.allOptionContracts.add(oc);
+					this.sortedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
+				}
 			}
 		}
 
@@ -83,7 +83,23 @@ public class GetInstruments {
 		return new DeribitRsp(jsRsp);
 	}
 
-	private JSONObject getFromDisk() {
+	
+	private DeribitRsp getFromDisk() {
+		DeribitRsp rezult = null;
+		try (FileInputStream fis = new FileInputStream("chain_oos.txt");
+			 BufferedInputStream bis = new BufferedInputStream(fis);
+			 ObjectInputStream ois = new ObjectInputStream(bis);){
+			Object infile = ois.readObject();
+			if (infile instanceof DeribitRsp) {
+				rezult = (DeribitRsp) infile;
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+		return rezult;
+	}
+	private JSONObject getFromDisk_JS() {
 		JSONObject rezult = new JSONObject();
 		try (FileInputStream fis = new FileInputStream("chain_oos.txt");
 			 BufferedInputStream bis = new BufferedInputStream(fis);
@@ -103,7 +119,7 @@ public class GetInstruments {
 		try (FileOutputStream fos = new FileOutputStream("chain_oos.txt");
 			 BufferedOutputStream bos = new BufferedOutputStream(fos);
 			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
-			oos.writeObject(this.jsResponse.toString(4));
+			oos.writeObject(this.dr);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			throw new RuntimeException(e);

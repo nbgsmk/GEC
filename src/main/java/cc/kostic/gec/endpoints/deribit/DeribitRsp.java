@@ -2,12 +2,13 @@ package cc.kostic.gec.endpoints.deribit;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DeribitRsp {
+public class DeribitRsp implements Serializable {
 	
 	private Map<String, Object> webResponse;
 	

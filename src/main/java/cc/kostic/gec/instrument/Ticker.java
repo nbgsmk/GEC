@@ -2,6 +2,7 @@ package cc.kostic.gec.instrument;
 
 import cc.kostic.gec.primitives.Kind;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -10,7 +11,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Ticker {
+public class Ticker implements Serializable {
+	// dovoljno je da ova klasa implementira Serializable
+	// a Greeks i Stats koji su ispod nje to nekako sami rade
 	
 	/*
 	OPTION TICKER
@@ -142,10 +145,10 @@ public class Ticker {
 		m = (Map<String, ?>) raw.get("stats");		// STATS je nested mapa -> key "stats")
 		return new Stats(m);
 	}
-	public Stats getGreeks(){
+	public Greeks getGreeks(){
 		Map<String, ?> m = new HashMap<>();
 		m = (Map<String, ?>) raw.get("greeks");		// GREEKS je nested mapa -> key "greeks"
-		return new Stats(m);
+		return new Greeks(m);
 	}
 	public BigDecimal getIndexPrice() {
 		return new BigDecimal(raw.get("index_price").toString());

@@ -47,7 +47,7 @@ public class GetTicker {
 				try {
 					dr = getFromWeb();
 					t = new Ticker(dr.getResultObject(HashMap.class));
-					Thread.sleep(50);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				}

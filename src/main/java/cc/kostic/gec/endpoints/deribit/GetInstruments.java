@@ -1,5 +1,6 @@
 package cc.kostic.gec.endpoints.deribit;
 
+import cc.kostic.gec.generic.DiskCache;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
@@ -57,7 +58,8 @@ public class GetInstruments {
 			}
 
 			case DISK -> {
-				dr = getFromDisk();
+				// dr = getFromDisk();
+				dr = (DeribitRsp) DiskCache.getFromStorage("option_chains.oos");
 				List<Map<String, ?>> list = dr.getResultObject(List.class);
 				for (int i = 0; i < list.size(); i++) {
 					OptionContract oc = new OptionContract(list.get(i));
@@ -77,62 +79,19 @@ public class GetInstruments {
 	}
 
 	
-	private DeribitRsp getFromDisk() {
-		DeribitRsp rezult = null;
-		try (FileInputStream fis = new FileInputStream("chain_oos.txt");
-			 BufferedInputStream bis = new BufferedInputStream(fis);
-			 ObjectInputStream ois = new ObjectInputStream(bis);){
-			Object infile = ois.readObject();
-			if (infile instanceof DeribitRsp) {
-				rezult = (DeribitRsp) infile;
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			System.out.println(e.getMessage());
-			throw new RuntimeException(e);
-		}
-		return rezult;
-	}
-	private JSONObject getFromDisk_JS() {
-		JSONObject rezult = new JSONObject();
-		try (FileInputStream fis = new FileInputStream("chain_oos.txt");
-			 BufferedInputStream bis = new BufferedInputStream(fis);
-			 ObjectInputStream ois = new ObjectInputStream(bis);){
-			Object infile = ois.readObject();
-			if (infile instanceof String) {
-				rezult = new JSONObject((String) infile);	// FULL FREEZE!! cast (String) inace se dobije naizgled ispravan json objekat ali nema potrebne podatke
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			System.out.println(e.getMessage());
-			throw new RuntimeException(e);
-		}
-		return rezult;
+
+	public void writeToDisk(){
+		DiskCache.writeToStorage(dr, "option_chains.oos");
 	}
 
-	public void writeToDisk() {
-		try (FileOutputStream fos = new FileOutputStream("chain_oos.txt");
-			 BufferedOutputStream bos = new BufferedOutputStream(fos);
-			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
-			oos.writeObject(this.dr);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			throw new RuntimeException(e);
-		}
-	}
+
+
 	
 	public SortedSet<Expiration> getExpirations() {
 		return sortedExpirations;
 	}
 
-
-	// private JSONObject getGreeksFromWeb(JSONObject jsContract){
-	// 	OptionContract contract = new OptionContract(jsContract);
-	// 	String s = contract.getInstrument_name();
-	// 	GetTicker t = new GetTicker(s);
-	// 	JSONObject gg = t.getResult();
-	// 	jsContract.accumulate("greeks", gg.getJSONObject("greeks"));
-	// 	return jsContract;
-	// }
-
+	
 	
 	
 	

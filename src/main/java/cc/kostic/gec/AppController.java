@@ -1,6 +1,7 @@
 package cc.kostic.gec;
 
 import cc.kostic.gec.endpoints.deribit.*;
+import cc.kostic.gec.generic.DiskCache;
 import cc.kostic.gec.instrument.Instrument;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.instrument.Ticker;
@@ -54,6 +55,8 @@ public class AppController {
 		gis.writeToDisk();
 		prikaz(gis.getExpirations(), contracts);
 		
+		System.out.println("Fetching " + contracts.size() + " elements will take " + (contracts.size()/10) + " seconds");
+		int kaunt = 0;
 		List<Ticker> tickerList = new ArrayList<>();
 		for (OptionContract oc : contracts) {
 			String n = oc.getInstrument_name();
@@ -61,10 +64,15 @@ public class AppController {
 			Ticker t = gt.getResult(DataSRC.WEB);
 			tickerList.add(t);
 			
+			kaunt ++;
+			if ( (kaunt % 10) == 0) {
+				// System.out.println(t);
+				System.out.print("." + kaunt);
+			}
 		}
 		
-		
-		
+		System.out.println();
+		DiskCache.writeToStorage(tickerList, "ticker_list.oos");
 		System.out.println("wow");
 	}
 

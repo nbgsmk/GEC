@@ -1,83 +1,122 @@
 package cc.kostic.gec.endpoints.deribit;
 
+import cc.kostic.gec.instrument.Instrument;
+import cc.kostic.gec.instrument.OptionContract;
+import cc.kostic.gec.instrument.Ticker;
+import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.web.Fetcher;
+import javafx.beans.property.SimpleIntegerProperty;
 import org.json.JSONObject;
+
+import java.io.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GetTicker {
 	
-	private final BaseURL b;
-	private final String instrument_name;
+	private final String reqUrl;
+	private DeribitRsp dr;
 	
+	
+	// constructor
 	public GetTicker(String instrument_name) {
-		this.instrument_name = instrument_name;
-		b = new BaseURL();
+		this.reqUrl = buildReq(new BaseURL(), instrument_name);
 	}
 	
-	private String buildReq(){
+	private String buildReq(BaseURL b, String instrument_name){
 		// return "https://www.deribit.com/api/v2/public/ticker?instrument_name=BTC-26JUN26-100000-C";
 		return b.pub() + "/ticker?instrument_name=" + instrument_name;
 	}
 	
-	public JSONObject getResult(){
-		DeribitRsp dr;
-		try {
-			Thread.sleep(100);
-			String reqUrl = buildReq();
-			Fetcher f = new Fetcher(reqUrl);
-			dr = new DeribitRsp(f.fetch());
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+	public void run(){
+		Fetcher f = new Fetcher(this.reqUrl);
+		JSONObject jsRsp = f.fetch();
+		this.dr = new DeribitRsp(jsRsp);
+	}
+	
+	public String getJsonRpcVer(){
+		return dr.getJsonRpcVersion();
+	}
+	public Ticker getResult(DataSRC dataSource){
+		Ticker t = null;
+		switch (dataSource){
+			case WEB -> {
+				try {
+					dr = getFromWeb();
+					t = new Ticker(dr.getResultObject(HashMap.class));
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			case DISK -> {
+				dr = getFromDisk();
+				t = new Ticker(dr.getResultObject(HashMap.class));
+			}
 		}
-		return dr.getResultObject(null);
+		return t;
 	}
 	
 	
 	
-	// https://www.deribit.com/api/v2/public/ticker?instrument_name=BTC-26JUN26-100000-C
- 	//
-	// --------------------------------------------------------------------------------
-	// {
-	//   "jsonrpc": "2.0",
-	//   "result": {
-	//     "timestamp": 1752057345721,
-	//     "state": "open",
-	//     "stats": {
-	//       "high": null,
-	//       "low": null,
-	//       "price_change": null,
-	//       "volume": 0,
-	//       "volume_usd": 0
-	//     },
-	//     "greeks": {
-	//       "delta": 0.71138,
-	//       "gamma": 0.00001,
-	//       "vega": 389.29255,
-	//       "theta": -25.13021,
-	//       "rho": 524.77921
-	//     },
-	//     "index_price": 108827.5,
-	//     "instrument_name": "BTC-26JUN26-100000-C",
-	//     "last_price": 0.247,
-	//     "settlement_price": 0.24231149,
-	//     "min_price": 0.1975,
-	//     "max_price": 0.3015,
-	//     "open_interest": 1.2,
-	//     "mark_price": 0.2425,
-	//     "best_bid_price": 0.2395,
-	//     "mark_iv": 45.43,
-	//     "ask_iv": 46.18,
-	//     "bid_iv": 44.54,
-	//     "underlying_price": 116086.34,
-	//     "underlying_index": "BTC-26JUN26",
-	//     "best_ask_price": 0.245,
-	//     "interest_rate": 0,
-	//     "estimated_delivery_price": 108827.5,
-	//     "best_ask_amount": 2,
-	//     "best_bid_amount": 2
-	//   },
-	//   "usIn": 1752057346027899,
-	//   "usOut": 1752057346028067,
-	//   "usDiff": 168,
-	//   "testnet": false
-	// }
+	private DeribitRsp getFromWeb(){
+		Fetcher f = new Fetcher(this.reqUrl);
+		JSONObject jsRsp = f.fetch();
+		return new DeribitRsp(jsRsp);
+	}
+	
+	
+	private DeribitRsp getFromDisk() {
+		DeribitRsp rezult = null;
+		try (FileInputStream fis = new FileInputStream("tickers_oos.txt");
+			 BufferedInputStream bis = new BufferedInputStream(fis);
+			 ObjectInputStream ois = new ObjectInputStream(bis);){
+			Object infile = ois.readObject();
+			if (infile instanceof DeribitRsp) {
+				rezult = (DeribitRsp) infile;
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+		return rezult;
+	}
+	
+	
+	public void writeToDisk() {
+		try (FileOutputStream fos = new FileOutputStream("tickers_oos.txt");
+			 BufferedOutputStream bos = new BufferedOutputStream(fos);
+			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
+			oos.writeObject(this.dr);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
+	
+	public Object getErrorObject(){
+		return dr.getErrorObject();
+	}
+	public boolean isTestnet(){
+		return dr.isTestnet();
+	}
+	public Instant getMicroSecIn(){
+		return dr.getMicroSecIn();
+	}
+	public Instant getMicroSecOut(){
+		return dr.getMicroSecOut();
+	}
+	public Long getMicroSecDiff(){
+		return dr.getMicroSecDiff();
+	}
+
+	
+	
+
 }

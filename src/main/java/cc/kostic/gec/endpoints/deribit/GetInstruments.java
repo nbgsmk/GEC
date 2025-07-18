@@ -6,30 +6,23 @@ import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
 import cc.kostic.gec.web.Fetcher;
 import javafx.beans.property.SimpleIntegerProperty;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.time.Instant;
 import java.util.*;
 
 public class GetInstruments {
 	
 	private final String reqUrl;
-	
-	private JSONObject jsResponse;
 	private DeribitRsp dr;
 	
 	private final List<OptionContract> allOptionContracts = new ArrayList<>();
 	private final SortedSet<Expiration> sortedExpirations = new TreeSet<>();
-
+	
 	public static SimpleIntegerProperty kaunt = new SimpleIntegerProperty();
 	
-	public enum SRC{
-		WEB,
-		DISK
-	}
 	
+	// constructor
 	public GetInstruments(Currency currency, Kind kind) {
 		this.reqUrl = buildReq(new BaseURL(), currency, kind);
 	}
@@ -49,7 +42,7 @@ public class GetInstruments {
 	
 	
 	
-	public List<OptionContract> getResult(SRC dataSource){
+	public List<OptionContract> getResult(DataSRC dataSource){
 		switch (dataSource){
 			case WEB -> {
 				dr = getFromWeb();

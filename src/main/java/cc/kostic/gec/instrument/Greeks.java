@@ -3,39 +3,45 @@ package cc.kostic.gec.instrument;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class Greeks {
 	
-	private final BigDecimal	delta;		// "delta":0
-	private final BigDecimal	gamma;		// "gamma":0
-	private final BigDecimal	vega;		// "vega":0.00001
-	private final BigDecimal	theta;		// "theta":-0.00003
-	private final BigDecimal	rho;		// "rho":0
-
+	/*
+	GREEKS je deo odgoovora za endpoint /ticker?
 	
-	public Greeks(JSONObject data) {
-		this.delta = data.optBigDecimal("delta", null);
-		this.gamma = data.optBigDecimal("gamma", null);
-		this.vega = data.optBigDecimal("vega", null);
-		this.theta = data.optBigDecimal("theta", null);
-		this.rho = data.optBigDecimal("rho", null);
-	}
+		"greeks": {
+			"delta": 0.78899,
+			"gamma": 0.00001,
+			"vega": 301.89834,
+			"theta": -26.48201,
+			"rho": 462.09342
+		},
+	
+	*/
+	
+	private final Map<String, ?> raw;                             // mozda ce da zatreba
+	
+	
+	public Greeks(Map<String, ?> o) {
+			this.raw = o;
+		}
 	
 	
 	public BigDecimal getDelta() {
-		return delta;
+		return new BigDecimal(raw.get("delta").toString());
 	}
 	public BigDecimal getGamma() {
-		return gamma;
+		return new BigDecimal(raw.get("gamma").toString());
 	}
 	public BigDecimal getVega() {
-		return vega;
+		return new BigDecimal(raw.get("vega").toString());
 	}
 	public BigDecimal getTheta() {
-		return theta;
+		return new BigDecimal(raw.get("theta").toString());
 	}
 	public BigDecimal getRho() {
-		return rho;
+		return new BigDecimal(raw.get("rho").toString());
 	}
 	
 }

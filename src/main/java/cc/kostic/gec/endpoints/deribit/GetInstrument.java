@@ -13,6 +13,7 @@ public class GetInstrument {
 	private final String reqUrl;
 	private DeribitRsp dr;
 	
+	// constructor
 	public GetInstrument(String instrument_name) {
 		this.reqUrl = buildReq(new BaseURL(), instrument_name);
 	}

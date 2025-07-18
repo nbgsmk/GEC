@@ -1,11 +1,9 @@
 package cc.kostic.gec;
 
-import cc.kostic.gec.endpoints.deribit.GetExpirations;
-import cc.kostic.gec.endpoints.deribit.GetInstrument;
-import cc.kostic.gec.endpoints.deribit.GetInstruments;
-import cc.kostic.gec.endpoints.deribit.GetTicker;
+import cc.kostic.gec.endpoints.deribit.*;
 import cc.kostic.gec.instrument.Instrument;
 import cc.kostic.gec.instrument.OptionContract;
+import cc.kostic.gec.instrument.Ticker;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
@@ -16,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -51,16 +50,28 @@ public class AppController {
 	
 	public void onGetFromWebClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getResult(GetInstruments.SRC.WEB);
+		List<OptionContract> contracts = gis.getResult(DataSRC.WEB);
 		gis.writeToDisk();
 		prikaz(gis.getExpirations(), contracts);
+		
+		List<Ticker> tickerList = new ArrayList<>();
+		for (OptionContract oc : contracts) {
+			String n = oc.getInstrument_name();
+			GetTicker gt = new GetTicker(n);
+			Ticker t = gt.getResult(DataSRC.WEB);
+			tickerList.add(t);
+			
+		}
+		
+		
+		
 		System.out.println("wow");
 	}
 
 
 	public void onGetFromDiskClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getResult(GetInstruments.SRC.DISK);
+		List<OptionContract> contracts = gis.getResult(DataSRC.DISK);
 		prikaz(gis.getExpirations(), contracts);
 		System.out.println("wow");
 	}
@@ -110,7 +121,7 @@ public class AppController {
  		// 5) isto to samo zameni traded_volume umesto open_interest
 
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getResult(GetInstruments.SRC.DISK);
+		List<OptionContract> contracts = gis.getResult(DataSRC.DISK);
 		Set<Expiration>  expirations = gis.getExpirations();
 		// fori contract
 		/*
@@ -186,13 +197,19 @@ public class AppController {
 	@FXML
 	public void onInstrumentSClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> postojeci_kontrakti = gis.getResult(GetInstruments.SRC.WEB);
+		List<OptionContract> postojeci_kontrakti = gis.getResult(DataSRC.WEB);
 		System.out.println(postojeci_kontrakti);
 		System.out.println("instrument-s");
 	}
 	
 	@FXML
 	public void onTickerClick(ActionEvent actionEvent) {
+		
+		GetTicker gt = new GetTicker("BTC-27MAR26-100000-C");
+		Ticker ttt = gt.getResult(DataSRC.WEB);
+		System.out.println(ttt.getInstrumentName() + " underlying price=" + ttt.getUnderlyingPrice() + ", IV: " + ttt.getMarkIV());
+		System.out.println("ticker");
+		
 	}
 	
 }

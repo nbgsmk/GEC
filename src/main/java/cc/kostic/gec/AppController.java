@@ -34,7 +34,7 @@ public class AppController {
 	@FXML
 	public Label tv_timestamp;
 	@FXML
-	public Label tv_items;
+	public Label tv_status_line;
 	@FXML
 	public TabPane tp_test;
 	@FXML
@@ -81,6 +81,7 @@ public class AppController {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getResult(DataSRC.DISK);
 		prikaz(gis.getExpirations(), contracts);
+		
 		System.out.println("wow");
 	}
 
@@ -104,7 +105,7 @@ public class AppController {
 			t.setContent(scroll);
 			tp_chains.getTabs().add(t);
 			// tv_timestamp.setText("todo");
-			tv_items.setText("exp/instr: " + exps.size() + "/" + contracts.size());
+			tv_status_line.setText("exp/instr: " + exps.size() + "/" + contracts.size());
 		}
 
 	}

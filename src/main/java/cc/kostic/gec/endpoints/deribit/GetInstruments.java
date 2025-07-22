@@ -6,7 +6,13 @@ import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
 import cc.kostic.gec.web.Fetcher;
+import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -20,7 +26,8 @@ public class GetInstruments {
 	private final List<OptionContract> allOptionContracts = new ArrayList<>();
 	private final SortedSet<Expiration> sortedExpirations = new TreeSet<>();
 	
-	public static SimpleIntegerProperty kaunt = new SimpleIntegerProperty();
+	public static final IntegerProperty kaunt = new SimpleIntegerProperty();
+	public static final StringProperty status = new SimpleStringProperty();
 	
 	
 	// constructor
@@ -53,7 +60,14 @@ public class GetInstruments {
 					OptionContract oc = new OptionContract(hm);
 					this.allOptionContracts.add(oc);
 					this.sortedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
-					kaunt.set(i);
+					int finalI = i;
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							kaunt.set(finalI);
+							status.set(finalI + "/" + hashMapovi.size());
+						}
+					});
 				}
 			}
 
@@ -65,6 +79,14 @@ public class GetInstruments {
 					OptionContract oc = new OptionContract(list.get(i));
 					this.allOptionContracts.add(oc);
 					this.sortedExpirations.add(new Expiration(oc.getExpiration_timestamp()));
+					int finalI = i;
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							kaunt.set(finalI);
+							status.set(finalI + "/" + list.size());
+						}
+					});
 				}
 			}
 		}
@@ -90,10 +112,6 @@ public class GetInstruments {
 	public SortedSet<Expiration> getExpirations() {
 		return sortedExpirations;
 	}
-
-	
-	
-	
 	
 	
 

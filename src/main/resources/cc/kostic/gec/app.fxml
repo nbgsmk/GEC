@@ -92,7 +92,7 @@
                <graphic>
                   <Label text="Timestamp:" />
                </graphic></Label>
-            <Label fx:id="tv_items" text="_">
+            <Label fx:id="tv_status_line" text="_">
                <graphic>
                   <Label text="Count:" />
                </graphic>

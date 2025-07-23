@@ -1,5 +1,6 @@
 package cc.kostic.gec.primitives;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -7,7 +8,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public class Expiration implements Comparable<Expiration>{
+public class Expiration implements Serializable, Comparable<Expiration>{
 	
 	private final BigDecimal expiration_timestamp;
 	private String expirationStringISO = "";

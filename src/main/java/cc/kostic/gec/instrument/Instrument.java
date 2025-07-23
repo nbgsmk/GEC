@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class Instrument {
+public class Instrument implements Serializable {
 	
 	/*
 	

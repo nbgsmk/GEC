@@ -5,7 +5,10 @@ import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.instrument.Ticker;
 import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.web.Fetcher;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -15,12 +18,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cc.kostic.gec.AppController.TICKSfn;
+
 public class GetTicker {
 	
 	private final String reqUrl;
 	private DeribitRsp dr;
-	
-	
+
+	public static final IntegerProperty kaunt = new SimpleIntegerProperty();
+	public static final StringProperty status = new SimpleStringProperty();
+
 	// constructor
 	public GetTicker(String instrument_name) {
 		this.reqUrl = buildReq(new BaseURL(), instrument_name);
@@ -29,12 +36,6 @@ public class GetTicker {
 	private String buildReq(BaseURL b, String instrument_name){
 		// return "https://www.deribit.com/api/v2/public/ticker?instrument_name=BTC-26JUN26-100000-C";
 		return b.pub() + "/ticker?instrument_name=" + instrument_name;
-	}
-	
-	public void run(){
-		Fetcher f = new Fetcher(this.reqUrl);
-		JSONObject jsRsp = f.fetch();
-		this.dr = new DeribitRsp(jsRsp);
 	}
 	
 	public String getJsonRpcVer(){
@@ -72,7 +73,7 @@ public class GetTicker {
 	
 	private DeribitRsp getFromDisk() {
 		DeribitRsp rezult = null;
-		try (FileInputStream fis = new FileInputStream("tickers_oos.txt");
+		try (FileInputStream fis = new FileInputStream(TICKSfn);
 			 BufferedInputStream bis = new BufferedInputStream(fis);
 			 ObjectInputStream ois = new ObjectInputStream(bis);){
 			Object infile = ois.readObject();
@@ -88,7 +89,7 @@ public class GetTicker {
 	
 	
 	public void writeToDisk() {
-		try (FileOutputStream fos = new FileOutputStream("tickers_oos.txt");
+		try (FileOutputStream fos = new FileOutputStream(TICKSfn);
 			 BufferedOutputStream bos = new BufferedOutputStream(fos);
 			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
 			oos.writeObject(this.dr);

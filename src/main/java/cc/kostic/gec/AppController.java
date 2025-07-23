@@ -8,16 +8,18 @@ import cc.kostic.gec.instrument.Ticker;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 public class AppController {
@@ -40,10 +42,14 @@ public class AppController {
 	@FXML
 	public Button b_gamma;
 	
-	
-	
-	
-	
+	public final static String CONTSfn = "contracts.oos";
+	public final static String EXPSfn = "expirations.oos";
+	public final static String TICKSfn = "tickers.oos";
+
+	public static final IntegerProperty kaunt = new SimpleIntegerProperty();
+	public static final StringProperty status = new SimpleStringProperty();
+
+
 	/// ////////////////////////////////////
 	/// CHAINS
 	/// ////////////////////////////////////
@@ -52,9 +58,10 @@ public class AppController {
 	public void onGetFromWebClick(ActionEvent actionEvent) {
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getResult(DataSRC.WEB);
-		gis.writeToDisk();
-		prikaz(gis.getExpirations(), contracts);
-		
+		List<Expiration> expirations = gis.getExpirations();
+		DiskCache.writeToStorage(contracts, CONTSfn);
+		DiskCache.writeToStorage(expirations, EXPSfn);
+
 		System.out.println("Fetching " + contracts.size() + " elements will take " + (contracts.size()/10) + " seconds");
 		int kaunt = 0;
 		List<Ticker> tickerList = new ArrayList<>();
@@ -72,7 +79,7 @@ public class AppController {
 		}
 		
 		System.out.println();
-		DiskCache.writeToStorage(tickerList, "ticker_list.oos");
+		DiskCache.writeToStorage(tickerList, TICKSfn);
 		System.out.println("wow");
 	}
 
@@ -87,7 +94,7 @@ public class AppController {
 
 
 
-	private void prikaz(Set<Expiration> exps, List<OptionContract> contracts){
+	private void prikaz(List<Expiration> exps, List<OptionContract> contracts){
 		// tv_timestamp.textProperty().bind(GetInstruments.kaunt.asString());
 		for (Expiration e : exps) {
 			Tab t = new Tab(e.getExpirationShortFmt());
@@ -121,6 +128,7 @@ public class AppController {
 		// https://github.com/Matteo-Ferrara/gex-tracker
 		// https://www.reddit.com/r/options/comments/16t9pc8/skewadjusted_gex/
 		// https://www.cboe.com/insights/posts/volatility-insights-evaluating-the-market-impact-of-spx-0-dte-options/
+		// https://perfiliev.com/blog/how-to-calculate-gamma-exposure-and-zero-gamma-level/
 		// open_interest * gamma * 100 * k * spot_price * (1% * spot_price)
 		// 1) CALLgamma = open_interest * gamma * spot_price * 100 * (0.01 * spot_price)
 		// 2) PUTgamma  = open_interest * gamma * spot_price * 100 * (0.01 * spot_price) * (-1)
@@ -131,7 +139,7 @@ public class AppController {
 
 		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
 		List<OptionContract> contracts = gis.getResult(DataSRC.DISK);
-		Set<Expiration>  expirations = gis.getExpirations();
+		List<Expiration>  expirations = gis.getExpirations();
 		// fori contract
 		/*
 			fori expiration

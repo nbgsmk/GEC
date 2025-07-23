@@ -5,8 +5,8 @@ module cc.kostic.gec {
 	requires org.controlsfx.controls;
 	requires org.kordamp.ikonli.javafx;
 	requires java.net.http;
-	requires org.json;
 	requires java.desktop;
+	requires org.json;
 	requires jdk.jfr;
 	
 	opens cc.kostic.gec to javafx.fxml;

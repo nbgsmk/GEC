@@ -14,7 +14,7 @@ public class App extends Application {
 		Scene scene = new Scene(fxmlLoader.load());
 		stage.setTitle("GEXCalc");
 		stage.setScene(scene);
-		stage.setX(5);
+		stage.setX(1605);
 		stage.setY(5);
 		stage.show();
 	}

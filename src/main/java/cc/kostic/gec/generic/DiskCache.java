@@ -13,6 +13,7 @@ public class DiskCache {
 			 BufferedOutputStream bos = new BufferedOutputStream(fos);
 			 ObjectOutputStream oos = new ObjectOutputStream(bos);) {
 			oos.writeObject(o);
+			System.out.println("written " + filename);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			throw new RuntimeException(e);

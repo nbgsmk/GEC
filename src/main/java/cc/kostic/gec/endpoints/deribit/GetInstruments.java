@@ -11,12 +11,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.util.*;
+
+import static cc.kostic.gec.AppController.CONTSfn;
 
 public class GetInstruments {
 	
@@ -42,14 +42,7 @@ public class GetInstruments {
 		return b.pub() + "/get_instruments?currency=" + currency + "&expired=false&kind=" + kind;
 	}
 
-	// public void run(){
-	// 	Fetcher f = new Fetcher(reqUrl);
-	// 	JSONObject jsRsp = f.fetch();
-	// 	this.dr = new DeribitRsp(jsRsp);
-	// }
-	
-	
-	
+
 	public List<OptionContract> getResult(DataSRC dataSource){
 		switch (dataSource){
 			case WEB -> {
@@ -72,8 +65,7 @@ public class GetInstruments {
 			}
 
 			case DISK -> {
-				// dr = getFromDisk();
-				dr = (DeribitRsp) DiskCache.getFromStorage("option_chains.oos");
+				dr = getFromDisk();
 				List<Map<String, ?>> list = dr.getResultObject(List.class);
 				for (int i = 0; i < list.size(); i++) {
 					OptionContract oc = new OptionContract(list.get(i));
@@ -100,17 +92,21 @@ public class GetInstruments {
 		return new DeribitRsp(jsRsp);
 	}
 
-	
+
+	private DeribitRsp getFromDisk() {
+		DeribitRsp rezult = (DeribitRsp) DiskCache.getFromStorage(CONTSfn);
+		return rezult;
+	}
 
 	public void writeToDisk(){
-		DiskCache.writeToStorage(dr, "option_chains.oos");
+		DiskCache.writeToStorage(dr, CONTSfn);
 	}
 
 
 
 	
-	public SortedSet<Expiration> getExpirations() {
-		return sortedExpirations;
+	public List<Expiration> getExpirations() {
+		return new ArrayList<>(sortedExpirations);
 	}
 	
 	

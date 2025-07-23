@@ -4,7 +4,8 @@ import java.util.StringJoiner;
 
 public class BaseURL {
 	
-	private static final String url = "https://www.deribit.com/api";
+	private static final String url = "https://test.deribit.com/api";
+	// private static final String url = "https://www.deribit.com/api";
 	private static final String ver = "v2";
 	private static final String pub = "public";
 	private static final String priv = "private";

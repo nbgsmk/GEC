@@ -2,6 +2,7 @@ package cc.kostic.gec.instrument;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
 

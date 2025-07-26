@@ -18,11 +18,19 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -31,6 +39,20 @@ import java.util.concurrent.Callable;
 
 
 public class AppController implements Initializable {
+
+	public Tab tab_chains;
+	public VBox vbox_chains;
+
+	public Tab tab_greeks;
+	public VBox vbox_greeks;
+	public ScrollPane scroll_charts;
+
+	public Tab tab_test;
+	public VBox vbox_test;
+
+
+	@FXML public TabPane tabPane_chainsByExpiration;
+
 	@FXML
 	public Button b_expirations;
 	@FXML
@@ -39,8 +61,6 @@ public class AppController implements Initializable {
 	public Button b_instruments;
 	@FXML
 	public Button b_ticker;
-	@FXML
-	public TabPane tp_chains;
 	@FXML
 	public Label tv_timestamp;
 	@FXML
@@ -124,7 +144,7 @@ public class AppController implements Initializable {
 			ScrollPane scroll = new ScrollPane();
 			scroll.setContent(l);
 			t.setContent(scroll);
-			tp_chains.getTabs().add(t);
+			tabPane_chainsByExpiration.getTabs().add(t);
 		}
 
 	}
@@ -135,7 +155,8 @@ public class AppController implements Initializable {
 	/// ////////////////////////////////////
 	/// GREEKS
 	/// ////////////////////////////////////
-	
+	private Map<String, List<Strukt>> gammasetVsExpirations;
+
 	public void onGammaClick(ActionEvent actionEvent) {
 		// https://github.com/Matteo-Ferrara/gex-tracker
 		// https://www.reddit.com/r/options/comments/16t9pc8/skewadjusted_gex/
@@ -163,7 +184,7 @@ public class AppController implements Initializable {
 			mot.put(t.getInstrumentName(), t);
 		}
 
-		Map<String, List<Strukt>> gammasetVsExpirations = new LinkedHashMap<>();
+		gammasetVsExpirations = new LinkedHashMap<>();
 		for (Expiration e : expirations){
 			List<Strukt> game = new ArrayList<>();
 			for (OptionContract oc : contracts) {
@@ -209,9 +230,80 @@ public class AppController implements Initializable {
 
 		System.out.println("wow");
 
+
 	}
-	
-	
+
+
+
+	public void onCharticClick(ActionEvent actionEvent) {
+		CategoryAxis xAxis = new CategoryAxis();
+		xAxis.setLabel("strajkovi");
+
+		//Defining the y axis
+		NumberAxis yAxis = new NumberAxis();
+		yAxis.setLabel("ɣ Г ex");
+
+		BarChart chart = new BarChart(xAxis, yAxis);
+		XYChart.Series tg = new XYChart.Series();
+		tg.setName("tot ɣ");
+		// List<Strukt> jedan = gammasetVsExpirations.get("8AUG25");
+		tg.getData().add("2");
+		tg.getData().add("7");
+		tg.getData().add("3");
+		// for (Strukt strukt : jedan){
+		// 	tg.getData().add(strukt.strajk.longValue());
+		// }
+		chart.getData().add(tg);
+
+		vbox_greeks.getChildren().add(chart);
+
+		// scroll_charts.setContent(vbox_greeks);
+		// sviChartovi.getChildren().add(chart);
+		// scroll_charts.setContent(sviChartovi);
+
+		// Scene scene = new Scene(vbox, 400, 200);
+
+		// primaryStage.setScene(scene);
+		// primaryStage.setHeight(300);
+		// primaryStage.setWidth(1200);
+		//
+		// primaryStage.show();
+
+		// xAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList("Speed", "User rating", "Milage", "Safety")));
+		//
+		// //Creating the Bar chart
+		// BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+		// barChart.setTitle("Comparison between various cars");
+		//
+		// //Prepare XYChart.Series objects by setting data
+		// XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+		// series1.setName("Fiat");
+		// series1.getData().add(new XYChart.Data<>("Speed", 1.0));
+		// series1.getData().add(new XYChart.Data<>("User rating", 3.0));
+		// series1.getData().add(new XYChart.Data<>("Milage", 5.0));
+		// series1.getData().add(new XYChart.Data<>("Safety", 5.0));
+		//
+		// XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+		// series2.setName("Audi");
+		// series2.getData().add(new XYChart.Data<>("Speed", 5.0));
+		// series2.getData().add(new XYChart.Data<>("User rating", 6.0));
+		//
+		// series2.getData().add(new XYChart.Data<>("Milage", 10.0));
+		// series2.getData().add(new XYChart.Data<>("Safety", 4.0));
+		//
+		// XYChart.Series<String, Number> series3 = new XYChart.Series<>();
+		// series3.setName("Ford");
+		// series3.getData().add(new XYChart.Data<>("Speed", 4.0));
+		// series3.getData().add(new XYChart.Data<>("User rating", 2.0));
+		// series3.getData().add(new XYChart.Data<>("Milage", 3.0));
+		// series3.getData().add(new XYChart.Data<>("Safety", 6.0));
+		//
+		// barChart.getData().addAll(series1, series2, series3);
+		//
+		// Group root = new Group(barChart);
+		// Scene scene = new Scene(root ,600, 300);
+		// primaryStage.setTitle("Sample Application");
+	}
 	
 	
 	
@@ -274,6 +366,7 @@ public class AppController implements Initializable {
 		System.out.println("ticker");
 		
 	}
+
 
 
 }

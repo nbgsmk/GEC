@@ -206,7 +206,7 @@ public class Instrument implements Serializable {
 	public String getExpirationString(){
 		Instant instant = Instant.ofEpochMilli(getExpiration_timestamp().longValue());
 		ZonedDateTime zdt = instant.atZone(ZoneId.of("UTC"));
-		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("ddMMMyy");
+		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dMMMyy");
 		String s = fmt.format(zdt);
 		return s;
 	}

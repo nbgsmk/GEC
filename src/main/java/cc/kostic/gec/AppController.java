@@ -2,27 +2,35 @@ package cc.kostic.gec;
 
 import cc.kostic.gec.endpoints.deribit.*;
 import cc.kostic.gec.generic.DiskCache;
+import cc.kostic.gec.instrument.Greeks;
 import cc.kostic.gec.instrument.Instrument;
 import cc.kostic.gec.instrument.OptionContract;
 import cc.kostic.gec.instrument.Ticker;
 import cc.kostic.gec.primitives.Currency;
 import cc.kostic.gec.primitives.Expiration;
 import cc.kostic.gec.primitives.Kind;
+import cc.kostic.gec.primitives.Strukt;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 
-public class AppController {
+public class AppController implements Initializable {
 	@FXML
 	public Button b_expirations;
 	@FXML
@@ -49,6 +57,11 @@ public class AppController {
 	public static final IntegerProperty kaunt = new SimpleIntegerProperty();
 	public static final StringProperty status = new SimpleStringProperty();
 
+	@Override
+	public void initialize(URL url, ResourceBundle resourceBundle) {
+
+	}
+
 
 	/// ////////////////////////////////////
 	/// CHAINS
@@ -62,8 +75,10 @@ public class AppController {
 		DiskCache.writeToStorage(contracts, CONTSfn);
 		DiskCache.writeToStorage(expirations, EXPSfn);
 
+		prikaz(expirations, contracts);
+
 		System.out.println("Fetching " + contracts.size() + " elements will take " + (contracts.size()/10) + " seconds");
-		int kaunt = 0;
+		int i = 0;
 		List<Ticker> tickerList = new ArrayList<>();
 		for (OptionContract oc : contracts) {
 			String n = oc.getInstrument_name();
@@ -71,10 +86,9 @@ public class AppController {
 			Ticker t = gt.getResult(DataSRC.WEB);
 			tickerList.add(t);
 			
-			kaunt ++;
-			if ( (kaunt % 10) == 0) {
-				// System.out.println(t);
-				System.out.print("." + kaunt);
+			i ++;
+			if ( ( (i % 10) == 0) || (i == contracts.size()) ){
+				System.out.print("." + i);
 			}
 		}
 		
@@ -85,17 +99,17 @@ public class AppController {
 
 
 	public void onGetFromDiskClick(ActionEvent actionEvent) {
-		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getResult(DataSRC.DISK);
-		prikaz(gis.getExpirations(), contracts);
-		
+		List<OptionContract> contracts = (List<OptionContract>) DiskCache.getFromStorage(CONTSfn);
+		List<Expiration> expirations = (List<Expiration>) DiskCache.getFromStorage(EXPSfn);
+		List<Ticker> tickers = (List<Ticker>) DiskCache.getFromStorage(TICKSfn);
+		prikaz(expirations, contracts);
 		System.out.println("wow");
 	}
 
 
 
 	private void prikaz(List<Expiration> exps, List<OptionContract> contracts){
-		// tv_timestamp.textProperty().bind(GetInstruments.kaunt.asString());
+		tv_status_line.setText(exps.size() + " expirations / " + contracts.size() + " contracts");
 		for (Expiration e : exps) {
 			Tab t = new Tab(e.getExpirationShortFmt());
 			String expirationName = "-" + t.getText() + "-";
@@ -111,8 +125,6 @@ public class AppController {
 			scroll.setContent(l);
 			t.setContent(scroll);
 			tp_chains.getTabs().add(t);
-			// tv_timestamp.setText("todo");
-			tv_status_line.setText("exp/instr: " + exps.size() + "/" + contracts.size());
 		}
 
 	}
@@ -121,7 +133,7 @@ public class AppController {
 	
 	
 	/// ////////////////////////////////////
-	/// GAMMA
+	/// GREEKS
 	/// ////////////////////////////////////
 	
 	public void onGammaClick(ActionEvent actionEvent) {
@@ -137,9 +149,48 @@ public class AppController {
 		//
  		// 5) isto to samo zameni traded_volume umesto open_interest
 
-		GetInstruments gis = new GetInstruments(Currency.ETH, Kind.OPTION);
-		List<OptionContract> contracts = gis.getResult(DataSRC.DISK);
-		List<Expiration>  expirations = gis.getExpirations();
+		List<OptionContract> contracts = (List<OptionContract>) DiskCache.getFromStorage(CONTSfn);
+		List<Expiration> expirations = (List<Expiration>) DiskCache.getFromStorage(EXPSfn);
+		List<Ticker> tickers = (List<Ticker>) DiskCache.getFromStorage(TICKSfn);
+
+		// Map<String, OptionContract> moc = new LinkedHashMap<>();	// potrebno zbog strike
+		// for (OptionContract oc : contracts) {
+		// 	moc.put(oc.getInstrument_name(), oc);
+		// }
+
+		Map<String, Ticker> mot = new LinkedHashMap<>();			// potrebno zbog underlying price i greeks
+		for (Ticker t : tickers) {
+			mot.put(t.getInstrumentName(), t);
+		}
+
+		Map<String, List<Strukt>> gammasetVsExpirations = new LinkedHashMap<>();
+		for (Expiration e : expirations){
+			List<Strukt> game = new ArrayList<>();
+			for (OptionContract oc : contracts) {
+				String ocExp = oc.getExpirationString();
+				if ( ! e.getExpirationShortFmt().equalsIgnoreCase(ocExp)) {
+					continue;
+				}
+				Ticker t = mot.get(oc.getInstrument_name());
+				Strukt strukt = new Strukt();
+
+				BigDecimal gg = t.getGreeks().getGamma(); // + - * / TODO i tako dalje
+				strukt.instrumentName = oc.getInstrument_name();
+				strukt.strajk = oc.getStrike();
+				strukt.expString = oc.getExpirationString();
+				if (oc.getOption_type() == OptionContract.OPTION_TYPE.CALL) { strukt.callGamma = strukt.callGamma.add(gg); }
+				if (oc.getOption_type() == OptionContract.OPTION_TYPE.PUT) { strukt.putGamma = strukt.putGamma.add(gg); }
+
+				game.add(strukt);
+			}
+			gammasetVsExpirations.put(e.getExpirationShortFmt(), game);
+			// System.out.println("game su");
+			// System.out.println("=======");
+			// System.out.println(game);
+		}
+
+
+
 		// fori contract
 		/*
 			fori expiration
@@ -154,12 +205,7 @@ public class AppController {
 			graf: call & put gamma / strike
 			graf: tot_strike gamma  / strike
 		 */
-		
-		
-		for (OptionContract oc : contracts) {
-			BigDecimal strajk = oc.getStrike();
-			
-		}
+
 
 		System.out.println("wow");
 
@@ -228,6 +274,7 @@ public class AppController {
 		System.out.println("ticker");
 		
 	}
-	
+
+
 }
 
